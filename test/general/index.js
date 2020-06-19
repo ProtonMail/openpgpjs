@@ -5,6 +5,7 @@ module.exports = () => describe('General', function () {
   require('./packet')();
   require('./signature')();
   require('./key')();
+  require('./forwarding')();
   require('./openpgp')();
   require('./config')();
   require('./oid')();
