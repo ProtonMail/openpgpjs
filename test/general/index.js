@@ -6,6 +6,7 @@ module.exports = () => describe('General', function () {
   require('./keyring.js')();
   require('./signature.js')();
   require('./key.js')();
+  require('./forwarding.js')();
   require('./openpgp.js')();
   require('./hkp.js')();
   require('./wkd.js')();
