@@ -79,6 +79,18 @@ export default {
     "2B240303020801010D":    "brainpoolP512r1"
   },
 
+  /** KDF parameters flags
+   * Non-standard extensions (for now) to allow email forwarding
+   * @enum {Integer}
+   * @readonly
+   */
+  kdfFlags: {
+    /** Specify fingerprint to use instead of the recipient's */
+    replace_fingerprint: 0x01,
+    /** Specify custom parameters to use in the KDF digest computation */
+    replace_kdf_params: 0x02
+  },
+
   /** A string to key specifier type
    * @enum {Integer}
    * @readonly
