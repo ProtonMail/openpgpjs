@@ -691,9 +691,10 @@ class SignaturePacket {
       }
 
       this.params = await this.params;
+      const privateParams = publicKeyAlgorithm === enums.publicKey.hmac ? key.privateParams : null;
 
       this[verified] = await crypto.signature.verify(
-        publicKeyAlgorithm, hashAlgorithm, this.params, key.publicParams,
+        publicKeyAlgorithm, hashAlgorithm, this.params, key.publicParams, privateParams,
         toHash, hash
       );
 
