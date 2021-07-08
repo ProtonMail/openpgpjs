@@ -7,7 +7,7 @@
 import publicKey from './public_key';
 import enums from '../enums';
 import util from '../util';
-import createHmac from './hmac';
+import calculateHmac from './hmac';
 import ShortByteString from '../type/short_byte_string';
 
 /**
@@ -114,9 +114,7 @@ export async function verify(algo, hashAlgo, signature, publicParams, privatePar
       }
       const { cipher: algo } = publicParams;
       const { keyMaterial } = privateParams;
-      const hmac = createHmac(algo.data, keyMaterial);
-      hmac.update(hashed);
-      const mac = hmac.finalize();
+      const mac = await calculateHmac(algo.data, keyMaterial, hashed);
       return util.equalsUint8Array(mac, signature.mac.data);
     }
     default:
@@ -172,10 +170,7 @@ export async function sign(algo, hashAlgo, publicKeyParams, privateKeyParams, da
     case enums.publicKey.hmac: {
       const { cipher: algo } = publicKeyParams;
       const { keyMaterial } = privateKeyParams;
-      const hmac = createHmac(algo.data, keyMaterial);
-      hmac.update(hashed);
-      const mac = hmac.finalize();
-
+      const mac = await calculateHmac(algo.data, keyMaterial, hashed);
       return { mac: new ShortByteString(mac) };
     }
     default:

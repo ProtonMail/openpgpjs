@@ -12,4 +12,5 @@ module.exports = () => describe('Crypto', function () {
   require('./ocb.js')();
   require('./rsa.js')();
   require('./validate.js')();
+  require('./hmac.js')();
 });

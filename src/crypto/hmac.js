@@ -5,51 +5,42 @@
  * @private
  */
 
-import { Hmac } from '@openpgp/asmcrypto.js/dist_es8/hmac/hmac';
-import { Sha1 } from '@openpgp/asmcrypto.js/dist_es8/hash/sha1/sha1';
-import { Sha256 } from '@openpgp/asmcrypto.js/dist_es8/hash/sha256/sha256';
-import { Sha512 } from '@openpgp/asmcrypto.js/dist_es8/hash/sha512/sha512';
 import enums from '../enums';
+import util from '../util';
+import hash from './hash';
 
 /**
  * Creats an HMAC object for data authentication
  * @param {module:enums.hash} algo - The hash algorithm to be used in the hmac
  * @param Uint8Array key - The key for the hmac computation
  */
-export default function createHmac(algo, key) {
+export default function calculateHmac(algo, key, data) {
   switch (algo) {
     case enums.hash.sha1:
     case enums.hash.sha256:
     case enums.hash.sha512:
-      return createSupportedHmac(algo, key);
+      return hmac(algo, key, data);
     default:
       throw new Error('Unsupported hash algorithm.');
   }
 }
 
-function createSupportedHmac(algo, key) {
-  const hash = getHash(algo);
-  const hmac = new Hmac(hash, key);
-  return new HMAC(hmac);
+async function hmac(algo, key, data) {
+  const opad = new Uint8Array(key.length);
+  opad.fill(0x5c);
+  xorInplace(opad, key);
+  const ipad = new Uint8Array(key.length);
+  ipad.fill(0x36);
+  xorInplace(ipad, key);
+
+  const inner_payload = util.concatUint8Array([ipad, data]);
+  const inner_hash = await hash.digest(algo, inner_payload);
+  const payload = util.concatUint8Array([opad, inner_hash]);
+  return hash.digest(algo, payload);
 }
 
-function getHash(algo) {
-  switch (algo) {
-    case enums.hash.sha1:
-      return new Sha1();
-    case enums.hash.sha256:
-      return new Sha256();
-    case enums.hash.sha512:
-      return new Sha512();
+function xorInplace(a, b) {
+  for (let i = 0; i < a.length; i++) {
+    a[i] = a[i] ^ b[i];
   }
-}
-
-function HMAC(hmac) {
-  this.hmac = hmac;
-  this.update = function(data) {
-    this.hmac.process(data);
-  };
-  this.finalize = function() {
-    return this.hmac.finish().result;
-  };
 }
