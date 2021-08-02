@@ -42,11 +42,19 @@ class PrivateKey extends PublicKey {
     for (const keyPacket of keyPackets) {
       switch (keyPacket.constructor.tag) {
         case enums.packet.secretKey: {
+          const algo = enums.write(enums.publicKey, keyPacket.algorithm);
+          if (algo === enums.publicKey.aead || algo === enums.publicKey.hmac) {
+            break;
+          }
           const pubKeyPacket = PublicKeyPacket.fromSecretKeyPacket(keyPacket);
           packetlist.push(pubKeyPacket);
           break;
         }
         case enums.packet.secretSubkey: {
+          const algo = enums.write(enums.publicKey, keyPacket.algorithm);
+          if (algo === enums.publicKey.aead || algo === enums.publicKey.hmac) {
+            break;
+          }
           const pubSubkeyPacket = PublicSubkeyPacket.fromSecretSubkeyPacket(keyPacket);
           packetlist.push(pubSubkeyPacket);
           break;
@@ -55,6 +63,7 @@ class PrivateKey extends PublicKey {
           packetlist.push(keyPacket);
       }
     }
+
     return new PublicKey(packetlist);
   }
 

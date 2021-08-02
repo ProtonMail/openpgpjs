@@ -69,9 +69,19 @@ export async function generateKey({ userIDs = [], passphrase = '', type = 'ecc',
   try {
     const { key, revocationCertificate } = await generate(options, config);
 
+    let publicKey;
+    try {
+      publicKey = formatObject(key.toPublic(), format, config);
+    } catch (err) {
+      if (type === 'symmetric') {
+        publicKey = null;
+      } else {
+        throw err;
+      }
+    }
     return {
       privateKey: formatObject(key, format, config),
-      publicKey: formatObject(key.toPublic(), format, config),
+      publicKey: publicKey,
       revocationCertificate
     };
   } catch (err) {
