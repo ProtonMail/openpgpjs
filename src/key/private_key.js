@@ -39,11 +39,17 @@ class PrivateKey extends PublicKey {
   toPublic() {
     const packetlist = new PacketList();
     const keyPackets = this.toPacketList();
+    let symmetricFound = false;
     for (const keyPacket of keyPackets) {
+      if (symmetricFound) {
+        symmetricFound = false;
+        continue;
+      }
       switch (keyPacket.constructor.tag) {
         case enums.packet.secretKey: {
           const algo = enums.write(enums.publicKey, keyPacket.algorithm);
           if (algo === enums.publicKey.aead || algo === enums.publicKey.hmac) {
+            symmetricFound = true;
             break;
           }
           const pubKeyPacket = PublicKeyPacket.fromSecretKeyPacket(keyPacket);
@@ -53,6 +59,7 @@ class PrivateKey extends PublicKey {
         case enums.packet.secretSubkey: {
           const algo = enums.write(enums.publicKey, keyPacket.algorithm);
           if (algo === enums.publicKey.aead || algo === enums.publicKey.hmac) {
+            symmetricFound = true;
             break;
           }
           const pubSubkeyPacket = PublicSubkeyPacket.fromSecretSubkeyPacket(keyPacket);
