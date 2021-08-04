@@ -51,8 +51,7 @@ class PrivateKey extends PublicKey {
         case enums.packet.secretKey: {
           const algo = enums.write(enums.publicKey, keyPacket.algorithm);
           if (algo === enums.publicKey.aead || algo === enums.publicKey.hmac) {
-            symmetricFound = true;
-            break;
+            throw new Error('Cannot create public key from symmetric private');
           }
           const pubKeyPacket = PublicKeyPacket.fromSecretKeyPacket(keyPacket);
           packetlist.push(pubKeyPacket);
