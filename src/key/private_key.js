@@ -41,9 +41,11 @@ class PrivateKey extends PublicKey {
     const keyPackets = this.toPacketList();
     let symmetricFound = false;
     for (const keyPacket of keyPackets) {
-      if (symmetricFound) {
-        symmetricFound = false;
+      if (symmetricFound &&
+          keyPacket.constructor.tag === enums.packet.Signature) {
         continue;
+      } else if (symmetricFound) {
+        symmetricFound = false;
       }
       switch (keyPacket.constructor.tag) {
         case enums.packet.secretKey: {
