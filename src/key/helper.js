@@ -20,7 +20,7 @@ export async function generateSecretSubkey(options, config) {
   const secretSubkeyPacket = new SecretSubkeyPacket(options.date, config);
   secretSubkeyPacket.packets = null;
   secretSubkeyPacket.algorithm = enums.write(enums.publicKey, options.algorithm);
-  await secretSubkeyPacket.generate(options.rsaBits, options.curve);
+  await secretSubkeyPacket.generate(options.rsaBits, options.curve, options.symmetric);
   await secretSubkeyPacket.computeFingerprintAndKeyID();
   return secretSubkeyPacket;
 }
@@ -29,7 +29,7 @@ export async function generateSecretKey(options, config) {
   const secretKeyPacket = new SecretKeyPacket(options.date, config);
   secretKeyPacket.packets = null;
   secretKeyPacket.algorithm = enums.write(enums.publicKey, options.algorithm);
-  await secretKeyPacket.generate(options.rsaBits, options.curve, options.config);
+  await secretKeyPacket.generate(options.rsaBits, options.curve, options.symmetric);
   await secretKeyPacket.computeFingerprintAndKeyID();
   return secretKeyPacket;
 }
@@ -353,6 +353,15 @@ export function sanitizeKeyOptions(options, subkeyDefaults = {}) {
       break;
     case 'rsa':
       options.algorithm = enums.publicKey.rsaEncryptSign;
+      break;
+    case 'symmetric':
+      if (options.sign) {
+        options.algorithm = enums.publicKey.hmac;
+        options.symmetric = options.symmetricHash || subkeyDefaults.symmetricHash;
+      } else {
+        options.algorithm = enums.publicKey.aead;
+        options.symmetric = options.symmetricCipher || subkeyDefaults.symmetricCipher;
+      }
       break;
     default:
       throw new Error(`Unsupported key type ${options.type}`);
