@@ -8,6 +8,7 @@ import testECDH from './ecdh.js';
 import testPKCS5 from './pkcs5.js';
 import testAESKW from './aes_kw.js';
 import testHKDF from './hkdf.js';
+import testHMAC from './hmac.js';
 import testGCM from './gcm.js';
 import testEAX from './eax.js';
 import testOCB from './ocb.js';
@@ -25,6 +26,7 @@ export default () => describe('Crypto', function () {
   testPKCS5();
   testAESKW();
   testHKDF();
+  testHMAC();
   testGCM();
   testEAX();
   testOCB();

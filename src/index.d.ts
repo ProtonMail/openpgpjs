@@ -417,8 +417,8 @@ export class AEADEncryptedDataPacket extends BasePacket<true> {
 
 export class PublicKeyEncryptedSessionKeyPacket extends BasePacket {
   static readonly tag: enums.packet.publicKeyEncryptedSessionKey;
-  private decrypt(keyPacket: SecretKeyPacket): void; // throws on error
-  private encrypt(keyPacket: PublicKeyPacket): void; // throws on error
+  private decrypt(keyPacket: SecretKeyPacket): Promise<void>; // throws on error
+  private encrypt(keyPacket: PublicKeyPacket): Promise<void>; // throws on error
 }
 
 export class SymEncryptedSessionKeyPacket extends BasePacket {
