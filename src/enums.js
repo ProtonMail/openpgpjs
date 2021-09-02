@@ -136,7 +136,11 @@ export default {
     /** Ed25519 (Sign only) */
     ed25519: 27,
     /** Ed448 (Sign only) */
-    ed448: 28
+    ed448: 28,
+    /** Symmetric authenticated encryption algorithms */
+    aead: 100,
+    /** Authentication using CMAC */
+    hmac: 101
   },
 
   /** {@link https://tools.ietf.org/html/rfc4880#section-9.2|RFC4880, section 9.2}

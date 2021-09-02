@@ -7,6 +7,8 @@
 import publicKey from './public_key';
 import enums from '../enums';
 import util from '../util';
+import calculateHmac from './hmac';
+import ShortByteString from '../type/short_byte_string';
 import { UnsupportedError } from '../packet/packet';
 
 /**
@@ -62,6 +64,10 @@ export function parseSignatureParams(algo, signature) {
       const RS = signature.subarray(read, read + 64); read += RS.length;
       return { RS };
     }
+    case enums.publicKey.hmac: {
+      const mac = new ShortByteString(); mac.read(signature.subarray(read));
+      return { mac };
+    }
     default:
       throw new UnsupportedError('Unknown signature algorithm.');
   }
@@ -76,12 +82,13 @@ export function parseSignatureParams(algo, signature) {
  * @param {module:enums.hash} hashAlgo - Hash algorithm
  * @param {Object} signature - Named algorithm-specific signature parameters
  * @param {Object} publicParams - Algorithm-specific public key parameters
+ * @param {Object} privateParams - Algorithm-specific private key parameters
  * @param {Uint8Array} data - Data for which the signature was created
  * @param {Uint8Array} hashed - The hashed data
  * @returns {Promise<Boolean>} True if signature is valid.
  * @async
  */
-export async function verify(algo, hashAlgo, signature, publicParams, data, hashed) {
+export async function verify(algo, hashAlgo, signature, publicParams, privateParams, data, hashed) {
   switch (algo) {
     case enums.publicKey.rsaEncryptSign:
     case enums.publicKey.rsaEncrypt:
@@ -112,6 +119,15 @@ export async function verify(algo, hashAlgo, signature, publicParams, data, hash
     case enums.publicKey.ed25519: {
       const { A } = publicParams;
       return publicKey.elliptic.eddsa.verify(algo, hashAlgo, signature, data, A, hashed);
+    }
+    case enums.publicKey.hmac: {
+      if (!privateParams) {
+        throw new Error('Cannot verify HMAC signature with symmetric key missing private parameters');
+      }
+      const { cipher: algo } = publicParams;
+      const { keyMaterial } = privateParams;
+      const mac = await calculateHmac(algo.getValue(), keyMaterial, hashed);
+      return util.equalsUint8Array(mac, signature.mac.data);
     }
     default:
       throw new Error('Unknown signature algorithm.');
@@ -168,6 +184,12 @@ export async function sign(algo, hashAlgo, publicKeyParams, privateKeyParams, da
       const { A } = publicKeyParams;
       const { seed } = privateKeyParams;
       return publicKey.elliptic.eddsa.sign(algo, hashAlgo, data, A, seed, hashed);
+    }
+    case enums.publicKey.hmac: {
+      const { cipher: algo } = publicKeyParams;
+      const { keyMaterial } = privateKeyParams;
+      const mac = await calculateHmac(algo.getValue(), keyMaterial, hashed);
+      return { mac: new ShortByteString(mac) };
     }
     default:
       throw new Error('Unknown signature algorithm.');

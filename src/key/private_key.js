@@ -39,14 +39,30 @@ class PrivateKey extends PublicKey {
   toPublic() {
     const packetlist = new PacketList();
     const keyPackets = this.toPacketList();
+    let symmetricFound = false;
     for (const keyPacket of keyPackets) {
+      if (symmetricFound &&
+          keyPacket.constructor.tag === enums.packet.Signature) {
+        continue;
+      } else if (symmetricFound) {
+        symmetricFound = false;
+      }
       switch (keyPacket.constructor.tag) {
         case enums.packet.secretKey: {
+          const algo = enums.write(enums.publicKey, keyPacket.algorithm);
+          if (algo === enums.publicKey.aead || algo === enums.publicKey.hmac) {
+            throw new Error('Cannot create public key from symmetric private');
+          }
           const pubKeyPacket = PublicKeyPacket.fromSecretKeyPacket(keyPacket);
           packetlist.push(pubKeyPacket);
           break;
         }
         case enums.packet.secretSubkey: {
+          const algo = enums.write(enums.publicKey, keyPacket.algorithm);
+          if (algo === enums.publicKey.aead || algo === enums.publicKey.hmac) {
+            symmetricFound = true;
+            break;
+          }
           const pubSubkeyPacket = PublicSubkeyPacket.fromSecretSubkeyPacket(keyPacket);
           packetlist.push(pubSubkeyPacket);
           break;
@@ -55,6 +71,7 @@ class PrivateKey extends PublicKey {
           packetlist.push(keyPacket);
       }
     }
+
     return new PublicKey(packetlist);
   }
 
@@ -204,6 +221,7 @@ class PrivateKey extends PublicKey {
    * @param {Integer} options.rsaBits    (optional) Number of bits for RSA subkeys
    * @param {Number}  options.keyExpirationTime (optional) Number of seconds from the key creation time after which the key expires
    * @param {Date}    options.date       (optional) Override the creation date of the key and the key signatures
+   * @param {String}  options.symmetric   (optional) Symmetric algorithm for aead/cmac keys
    * @param {Boolean} options.sign       (optional) Indicates whether the subkey should sign rather than encrypt. Defaults to false
    * @param {Object}  options.config     (optional) custom configuration settings to overwrite those in [config]{@link module:config}
    * @returns {Promise<PrivateKey>}
