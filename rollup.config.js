@@ -55,8 +55,8 @@ export default Object.assign([
     input: 'src/index.js',
     external: nodeBuiltinModules.concat(nodeDependencies),
     output: [
-      { file: 'dist/openpgp.js', format: 'iife', name: pkg.name, banner, intro },
-      { file: 'dist/openpgp.min.js', format: 'iife', name: pkg.name, banner, intro, plugins: [terser(terserOptions)], sourcemap: true },
+      { file: 'dist/openpgp.js', format: 'iife', name: 'openpgp', banner, intro },
+      { file: 'dist/openpgp.min.js', format: 'iife', name: 'openpgp', banner, intro, plugins: [terser(terserOptions)], sourcemap: true },
       { file: 'dist/openpgp.mjs', format: 'es', banner, intro },
       { file: 'dist/openpgp.min.mjs', format: 'es', banner, intro, plugins: [terser(terserOptions)], sourcemap: true }
     ].map(options => ({ ...options, inlineDynamicImports: true })),
@@ -82,8 +82,8 @@ export default Object.assign([
     input: 'src/index.js',
     external: nodeBuiltinModules.concat(nodeDependencies),
     output: [
-      { file: 'dist/node/openpgp.cjs', format: 'cjs', name: pkg.name, banner, intro },
-      { file: 'dist/node/openpgp.min.cjs', format: 'cjs', name: pkg.name, banner, intro, plugins: [terser(terserOptions)], sourcemap: true },
+      { file: 'dist/node/openpgp.cjs', format: 'cjs', name: 'openpgp', banner, intro },
+      { file: 'dist/node/openpgp.min.cjs', format: 'cjs', name: 'openpgp', banner, intro, plugins: [terser(terserOptions)], sourcemap: true },
       { file: 'dist/node/openpgp.mjs', format: 'es', banner, intro },
       { file: 'dist/node/openpgp.min.mjs', format: 'es', banner, intro, plugins: [terser(terserOptions)], sourcemap: true }
     ].map(options => ({ ...options, inlineDynamicImports: true })),
@@ -136,7 +136,7 @@ export default Object.assign([
     plugins: [
       alias({
         entries: {
-          openpgp: `./dist/${process.env.npm_config_lightweight ? 'lightweight/' : ''}openpgp.mjs`
+          '@protontech/openpgp': `./dist/${process.env.npm_config_lightweight ? 'lightweight/' : ''}openpgp.mjs`
         }
       }),
       resolve({
