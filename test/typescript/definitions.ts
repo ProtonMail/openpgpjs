@@ -17,7 +17,7 @@ import {
   generateSessionKey, encryptSessionKey, decryptSessionKeys,
   LiteralDataPacket, PacketList, CompressedDataPacket, SymEncryptedIntegrityProtectedDataPacket, PublicKeyPacket, PublicSubkeyPacket, SecretKeyPacket, SecretSubkeyPacket, CleartextMessage,
   type WebStream, type NodeWebStream
-} from 'openpgp';
+} from '@protontech/openpgp';
 
 (async () => {
 

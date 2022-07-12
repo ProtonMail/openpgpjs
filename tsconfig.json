@@ -7,7 +7,7 @@
     "rewriteRelativeImportExtensions": true,
     "allowJs": true,
     "paths": {
-      "openpgp": [ "." ]
+      "@protontech/openpgp": [ "." ]
     },
   }
 }
