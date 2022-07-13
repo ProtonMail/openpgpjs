@@ -241,10 +241,10 @@ export function parsePrivateKeyParams(algo, bytes, publicParams) {
     }
     case enums.publicKey.hmac: {
       const { cipher: algo } = publicParams;
-      const keySize = hash.getHashByteLength(algo);
+      const keySize = hash.getHashByteLength(algo.getValue());
       const hashSeed = bytes.subarray(read, read + 32); read += 32;
-      const key = bytes.subarray(read, read + keySize); read += keySize;
-      return { read, privateParams: { key, hashSeed } };
+      const keyMaterial = bytes.subarray(read, read + keySize); read += keySize;
+      return { read, privateParams: { hashSeed, keyMaterial } };
     }
     case enums.publicKey.aead: {
       const { cipher: algo } = publicParams;
@@ -396,8 +396,8 @@ async function createSymmetricParams(key, algo) {
   const bindingHash = await hash.sha256(seed);
   return {
     privateParams: {
-      keyMaterial: key,
-      hashSeed: seed
+      hashSeed: seed,
+      keyMaterial: key
     },
     publicParams: {
       cipher: algo,
@@ -450,14 +450,14 @@ export async function validateParams(algo, publicParams, privateParams) {
     }
     case enums.publicKey.hmac: {
       const { cipher: algo, digest } = publicParams;
-      const { keyMaterial, hashSeed } = privateParams;
-      const keySize = hash.getHashByteLength(algo);
+      const { hashSeed, keyMaterial } = privateParams;
+      const keySize = hash.getHashByteLength(algo.getValue());
       return keySize === keyMaterial.length &&
         util.equalsUint8Array(digest, await hash.sha256(hashSeed));
     }
     case enums.publicKey.aead: {
       const { cipher: algo, digest } = publicParams;
-      const { keyMaterial, hashSeed } = privateParams;
+      const { hashSeed, keyMaterial } = privateParams;
       const { keySize } = getCipher(algo.getValue());
       return keySize === keyMaterial.length &&
         util.equalsUint8Array(digest, await hash.sha256(hashSeed));
