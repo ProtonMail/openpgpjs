@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: SymEncryptedSessionKeyPacket</title>
+    <title>JSDoc: Class: GenericS2K</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: SymEncryptedSessionKeyPacket</h1>
+    <h1 class="page-title">Class: GenericS2K</h1>
 
     
 
@@ -28,18 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>SymEncryptedSessionKeyPacket<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description"><p>Symmetric-Key Encrypted Session Key Packets (Tag 3)</p>
-<p><a href="https://tools.ietf.org/html/rfc4880#section-5.3">RFC4880 5.3</a>:
-The Symmetric-Key Encrypted Session Key packet holds the
-symmetric-key encryption of a session key used to encrypt a message.
-Zero or more Public-Key Encrypted Session Key packets and/or
-Symmetric-Key Encrypted Session Key packets may precede a
-Symmetrically Encrypted Data packet that holds an encrypted message.
-The message is encrypted with a session key, and the session key is
-itself encrypted and stored in the Encrypted Session Key packet or
-the Symmetric-Key Encrypted Session Key packet.</p></div>
+        <h2><span class="attribs"><span class="type-signature"></span></span>GenericS2K<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -50,11 +39,9 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
         
 
     
-    <h2>Constructor</h2>
-    
 
     
-    <h4 class="name" id="SymEncryptedSessionKeyPacket"><span class="type-signature"></span>new SymEncryptedSessionKeyPacket<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="GenericS2K"><span class="type-signature"></span>new GenericS2K<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -165,7 +152,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js">packet/sym_encrypted_session_key.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js#L46">line 46</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js">type/s2k/generic.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js#L40">line 40</a>
     </li></ul></dd>
     
 
@@ -215,13 +202,13 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
         
             
-<h4 class="name" id="aeadAlgorithm"><span class="type-signature"></span>aeadAlgorithm<span class="type-signature"> :enums.aead</span></h4>
+<h4 class="name" id="algorithm"><span class="type-signature"></span>algorithm<span class="type-signature"> :<a href="module-enums.html#.hash">module:enums.hash</a>|0</span></h4>
 
 
 
 
 <div class="description">
-    <p>AEAD mode to encrypt the session key with (if AEAD protection is enabled)</p>
+    <p>Hash function identifier, or 0 for gnu-dummy keys</p>
 </div>
 
 
@@ -230,7 +217,10 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     <ul>
         <li>
             
-<span class="param-type">enums.aead</span>
+<span class="param-type"><a href="module-enums.html#.hash">module:enums.hash</a></span>
+|
+
+<span class="param-type">0</span>
 
 
         </li>
@@ -271,7 +261,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js">packet/sym_encrypted_session_key.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js#L63">line 63</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js">type/s2k/generic.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js#L45">line 45</a>
     </li></ul></dd>
     
 
@@ -289,14 +279,10 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
         
             
-<h4 class="name" id="sessionKeyAlgorithm"><span class="type-signature"></span>sessionKeyAlgorithm<span class="type-signature"> :enums.symmetric</span></h4>
+<h4 class="name" id="c"><span class="type-signature"></span>c<span class="type-signature"> :Integer</span></h4>
 
 
 
-
-<div class="description">
-    <p>Algorithm to encrypt the message with</p>
-</div>
 
 
 
@@ -304,7 +290,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     <ul>
         <li>
             
-<span class="param-type">enums.symmetric</span>
+<span class="param-type">Integer</span>
 
 
         </li>
@@ -345,7 +331,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js">packet/sym_encrypted_session_key.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js#L58">line 58</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js">type/s2k/generic.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js#L52">line 52</a>
     </li></ul></dd>
     
 
@@ -363,13 +349,13 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
         
             
-<h4 class="name" id="sessionKeyEncryptionAlgorithm"><span class="type-signature"></span>sessionKeyEncryptionAlgorithm<span class="type-signature"> :enums.symmetric</span></h4>
+<h4 class="name" id="salt"><span class="type-signature"></span>salt<span class="type-signature"> :Uint8Array</span></h4>
 
 
 
 
 <div class="description">
-    <p>Algorithm to encrypt the session key with</p>
+    <p>Eight bytes of salt in a binary string.</p>
 </div>
 
 
@@ -378,7 +364,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     <ul>
         <li>
             
-<span class="param-type">enums.symmetric</span>
+<span class="param-type">Uint8Array</span>
 
 
         </li>
@@ -419,7 +405,81 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js">packet/sym_encrypted_session_key.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js#L53">line 53</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js">type/s2k/generic.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js#L56">line 56</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="type"><span class="type-signature"></span>type<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>enums.s2k identifier or 'gnu-dummy'</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">String</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js">type/s2k/generic.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js#L50">line 50</a>
     </li></ul></dd>
     
 
@@ -447,7 +507,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
 
     
-    <h4 class="name" id="decrypt"><span class="type-signature">(async) </span>decrypt<span class="signature">(passphrase)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="produceKey"><span class="type-signature">(async) </span>produceKey<span class="signature">(passphrase)</span><span class="type-signature"> &rarr; {Promise.&lt;Uint8Array>}</span></h4>
     
 
     
@@ -455,7 +515,8 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
 
 <div class="description">
-    <p>Decrypts the session key with the given passphrase</p>
+    <p>Produces a key using the specified passphrase and the defined
+hashAlgorithm</p>
 </div>
 
 
@@ -507,7 +568,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
             
 
-            <td class="description last"><p>The passphrase in string form</p></td>
+            <td class="description last"><p>Passphrase containing user input</p></td>
         </tr>
 
     
@@ -550,7 +611,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js">packet/sym_encrypted_session_key.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js#L145">line 145</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js">type/s2k/generic.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js#L158">line 158</a>
     </li></ul></dd>
     
 
@@ -573,248 +634,31 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
 
 
-<h5>Throws:</h5>
+
+
+<h5>Returns:</h5>
 
         
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        <p>if decryption was not successful</p>
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="encrypt"><span class="type-signature">(async) </span>encrypt<span class="signature">(passphrase, config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Encrypts the session key with the given passphrase</p>
+<div class="param-desc">
+    <p>Produced key with a length corresponding to.
+hashAlgorithm hash length</p>
 </div>
 
 
 
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>passphrase</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>The passphrase in string form</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>config</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Full configuration, defaults to openpgp.config</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js">packet/sym_encrypted_session_key.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js#L175">line 175</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
 <dl>
     <dt>
-        <div class="param-desc">
-        <p>if encryption was not successful</p>
-        </div>
+        Type
     </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Uint8Array></span>
 
 
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
+    </dd>
 </dl>
 
-
     
-
-
 
 
 
@@ -826,7 +670,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
 
     
-    <h4 class="name" id="read"><span class="type-signature"></span>read<span class="signature">(bytes)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="read"><span class="type-signature"></span>read<span class="signature">(bytes)</span><span class="type-signature"> &rarr; {Integer}</span></h4>
     
 
     
@@ -834,7 +678,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
 
 <div class="description">
-    <p>Parsing function for a symmetric encrypted session key packet (tag 3).</p>
+    <p>Parsing function for a string-to-key specifier (<a href="https://tools.ietf.org/html/rfc4880#section-3.7">RFC 4880 3.7</a>).</p>
 </div>
 
 
@@ -886,7 +730,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
             
 
-            <td class="description last"><p>Payload of a tag 3 packet</p></td>
+            <td class="description last"><p>Payload of string-to-key specifier</p></td>
         </tr>
 
     
@@ -929,7 +773,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js">packet/sym_encrypted_session_key.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js#L74">line 74</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js">type/s2k/generic.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js#L79">line 79</a>
     </li></ul></dd>
     
 
@@ -954,6 +798,28 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Actual length of the object.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Integer</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -973,7 +839,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
 
 <div class="description">
-    <p>Create a binary representation of a tag 3 packet</p>
+    <p>Serializes s2k information</p>
 </div>
 
 
@@ -1019,7 +885,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js">packet/sym_encrypted_session_key.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/packet/sym_encrypted_session_key.js#L119">line 119</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js">type/s2k/generic.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.8.0-0/src/type/s2k/generic.js#L125">line 125</a>
     </li></ul></dd>
     
 
@@ -1048,7 +914,7 @@ the Symmetric-Key Encrypted Session Key packet.</p></div>
 
         
 <div class="param-desc">
-    <p>The Uint8Array representation.</p>
+    <p>Binary representation of s2k.</p>
 </div>
 
 
