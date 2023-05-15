@@ -131,6 +131,13 @@ export default {
    */
   allowUnauthenticatedStream: false,
   /**
+   * Allow decrypting forwarded messages, using keys with 0x40 ('forwarded communication') flag.
+   * Note: this is related to a **non-standard feature**.
+   * @memberof module:config
+   * @property {Boolean} allowForwardedMessages
+   */
+  allowForwardedMessages: false,
+  /**
    * @memberof module:config
    * @property {Boolean} checksumRequired Do not throw error when armor is missing a checksum
    */

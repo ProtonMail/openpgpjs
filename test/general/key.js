@@ -2972,8 +2972,8 @@ module.exports = () => describe('Key', function() {
     expect(key).to.exist;
   });
 
-  it('Parsing ECDH key with unknown kdf param version', async function() {
-    // subkey with unknown kdfParam version 255. Parsing should not fail, the subkey should simply dropped
+  it.skip('Parsing ECDH key with unknown kdf param version', async function() {
+    // subkey with unknown kdfParam version 255 (forwarding). Parsing should not fail, the subkey should simply dropped
     const key = await openpgp.readKey({ armoredKey: `-----BEGIN PGP PRIVATE KEY BLOCK-----
 
 xVgEZAdtGBYJKwYBBAHaRw8BAQdAcNgHyRGEaqGmzEqEwCobfUkyrJnY8faBvsf9

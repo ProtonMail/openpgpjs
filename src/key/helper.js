@@ -401,7 +401,8 @@ export function isValidDecryptionKeyPacket(signature, config) {
 
   return !signature.keyFlags ||
     (signature.keyFlags[0] & enums.keyFlags.encryptCommunication) !== 0 ||
-    (signature.keyFlags[0] & enums.keyFlags.encryptStorage) !== 0;
+    (signature.keyFlags[0] & enums.keyFlags.encryptStorage) !== 0 ||
+    (config.allowForwardedMessages && (signature.keyFlags[0] & enums.keyFlags.forwardedCommunication) !== 0);
 }
 
 /**
