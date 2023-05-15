@@ -722,3 +722,14 @@ export function armor(messagetype: enums.armor, body: object, partindex?: number
  */
 export function unarmor(input: string, config?: Config): Promise<{ text: string, data: Stream<Uint8Array>, type: enums.armor }>;
 
+interface KDFParamsData {
+  version: number;
+  hash: enums.hash;
+  cipher: enums.symmetric;
+  replacementFingerprint?: Uint8Array;
+}
+
+export class KDFParams {
+  constructor(data: KDFParamsData);
+  write(forReplacementParams?: boolean): Uint8Array;
+}
