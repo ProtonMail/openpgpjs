@@ -22,6 +22,8 @@ export { CleartextMessage, readCleartextMessage, createCleartextMessage } from '
 
 export * from './packet/index.js';
 
+export { default as KDFParams } from './type/kdf_params.js';
+
 export * from './encoding/armor.js';
 
 export { default as enums } from './enums.ts';

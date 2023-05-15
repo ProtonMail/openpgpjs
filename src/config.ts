@@ -33,6 +33,7 @@ export interface Config {
   parseAEADEncryptedV4KeysAsLegacy: boolean;
   allowUnauthenticatedMessages: boolean;
   allowUnauthenticatedStream: boolean;
+  allowForwardedMessages: boolean;
   minRSABits: number;
   passwordCollisionCheck: boolean;
   ignoreUnsupportedPackets: boolean;
@@ -206,6 +207,13 @@ const config: Config = {
    * @property {Boolean} allowUnauthenticatedStream
    */
   allowUnauthenticatedStream: false,
+  /**
+   * Allow decrypting forwarded messages, using keys with 0x40 ('forwarded communication') flag.
+   * Note: this is related to a **non-standard feature**.
+   * @memberof module:config
+   * @property {Boolean} allowForwardedMessages
+   */
+  allowForwardedMessages: false,
   /**
    * Minimum RSA key size allowed for key generation and message signing, verification and encryption.
    * The default is 2047 since due to a bug, previous versions of OpenPGP.js could generate 2047-bit keys instead of 2048-bit ones.
