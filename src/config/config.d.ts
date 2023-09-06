@@ -13,6 +13,7 @@ export interface Config {
   aeadProtect: boolean;
   allowUnauthenticatedMessages: boolean;
   allowUnauthenticatedStream: boolean;
+  allowForwardedMessages: boolean;
   minRSABits: number;
   passwordCollisionCheck: boolean;
   ignoreUnsupportedPackets: boolean;

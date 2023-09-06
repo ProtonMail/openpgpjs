@@ -21,6 +21,7 @@
  *
  * @requires enums
  * @module type/enum.js
+ * @access private
  */
 
 

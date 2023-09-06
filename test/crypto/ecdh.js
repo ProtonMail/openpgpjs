@@ -417,7 +417,7 @@ export default () => describe('ECDH key exchange @lightweight', function () {
       236, 71, 245, 86, 3, 168, 101, 74, 209, 105
     ]);
 
-    it('Valid serialization', async function () {
+    it('Valid serialization', function () {
       const cipher = openpgp.enums.symmetric.aes256;
       const hash = openpgp.enums.hash.sha256;
 

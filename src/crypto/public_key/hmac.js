@@ -1,3 +1,4 @@
+/** @access private */
 import enums from '../../enums';
 import util from '../../util';
 

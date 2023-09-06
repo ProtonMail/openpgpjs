@@ -1,3 +1,4 @@
+/** @access private */
 import util from '../util';
 
 class ShortByteString {

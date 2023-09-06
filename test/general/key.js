@@ -4790,7 +4790,7 @@ I8kWVkXU6vFOi+HWvv/ira7ofJu16NnoUkhclkUrk0mXubZvyl4GBg==
       const total = privateKey.getSubkeys().length;
       const opt2 = { type: 'symmetric', symmetricCipher: 'aes256' };
       let newPrivateKey = await privateKey.addSubkey(opt2);
-      const armoredKey = await newPrivateKey.armor();
+      const armoredKey = newPrivateKey.armor();
       newPrivateKey = await openpgp.readKey({ armoredKey: armoredKey });
       const subKey = newPrivateKey.getSubkeys()[total];
       expect(subKey).to.exist;
@@ -4806,7 +4806,7 @@ I8kWVkXU6vFOi+HWvv/ira7ofJu16NnoUkhclkUrk0mXubZvyl4GBg==
       const opt = { rsaBits: 512, userIDs: [userId], subkeys:[{ type: 'symmetric', symmetricCipher: 'aes256' }], format: 'object' };
 
       const { privateKey } = await openpgp.generateKey(opt);
-      const armoredKey = await privateKey.armor();
+      const armoredKey = privateKey.armor();
       const newKey = await openpgp.readKey({ armoredKey: armoredKey });
       const subKey = newKey.getSubkeys()[0];
       expect(newKey.getSubkeys().length).to.be.equal(1);

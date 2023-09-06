@@ -95,7 +95,9 @@ export async function createBindingSignature(subkey, primaryKey, options, config
       signatureType: enums.signature.keyBinding
     }, options.date, undefined, undefined, undefined, config);
   } else {
-    signatureProperties.keyFlags = [enums.keyFlags.encryptCommunication | enums.keyFlags.encryptStorage];
+    signatureProperties.keyFlags = options.forwarding ?
+      [enums.keyFlags.forwardedCommunication] :
+      [enums.keyFlags.encryptCommunication | enums.keyFlags.encryptStorage];
   }
   if (options.keyExpirationTime > 0) {
     signatureProperties.keyExpirationTime = options.keyExpirationTime;
@@ -396,6 +398,10 @@ export function sanitizeKeyOptions(options, subkeyDefaults = {}) {
   options.date = options.date || subkeyDefaults.date;
 
   options.sign = options.sign || false;
+  options.forwarding = options.forwarding || false;
+  if (options.sign && options.forwarding) {
+    throw new Error('Incompatible options: "sign" and "forwarding" cannot be set together');
+  }
 
   switch (options.type) {
     case 'ecc': // NB: this case also handles legacy eddsa and x25519 keys, based on `options.curve`
@@ -428,14 +434,14 @@ export function sanitizeKeyOptions(options, subkeyDefaults = {}) {
         options.algorithm = enums.publicKey.hmac;
         try {
           options.symmetric = enums.write(enums.hash, options.symmetricHash);
-        } catch (e) {
+        } catch {
           throw new Error('Unknown hash algorithm');
         }
       } else {
         options.algorithm = enums.publicKey.aead;
         try {
           options.symmetric = enums.write(enums.symmetric, options.symmetricCipher);
-        } catch (e) {
+        } catch {
           throw new Error('Unknown symmetric algorithm');
         }
       }

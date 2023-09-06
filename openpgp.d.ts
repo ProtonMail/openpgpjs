@@ -415,8 +415,8 @@ export class AEADEncryptedDataPacket extends BasePacket<true> {
 
 export class PublicKeyEncryptedSessionKeyPacket extends BasePacket {
   static readonly tag: enums.packet.publicKeyEncryptedSessionKey;
-  private decrypt(keyPacket: SecretKeyPacket): void; // throws on error
-  private encrypt(keyPacket: PublicKeyPacket): void; // throws on error
+  private decrypt(keyPacket: SecretKeyPacket): Promise<void>; // throws on error
+  private encrypt(keyPacket: PublicKeyPacket): Promise<void>; // throws on error
 }
 
 export class SymEncryptedSessionKeyPacket extends BasePacket {
@@ -688,8 +688,9 @@ interface GenerateKeyOptions {
 }
 export type KeyOptions = GenerateKeyOptions;
 
-export interface SubkeyOptions extends Pick<GenerateKeyOptions, 'type' | 'curve' | 'rsaBits' | 'keyExpirationTime' | 'date' | 'config'> {
+export interface SubkeyOptions extends Pick<GenerateKeyOptions, 'type' | 'curve' | 'rsaBits' | 'keyExpirationTime' | 'date' | 'config' > {
   sign?: boolean;
+  forwarding?: boolean;
 }
 
 export declare class KeyID {
