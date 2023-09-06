@@ -689,8 +689,9 @@ interface GenerateKeyOptions {
 }
 export type KeyOptions = GenerateKeyOptions;
 
-export interface SubkeyOptions extends Pick<GenerateKeyOptions, 'type' | 'curve' | 'rsaBits' | 'keyExpirationTime' | 'date' | 'config'> {
+export interface SubkeyOptions extends Pick<GenerateKeyOptions, 'type' | 'curve' | 'rsaBits' | 'keyExpirationTime' | 'date' | 'config' > {
   sign?: boolean;
+  forwarding?: boolean;
 }
 
 export declare class KeyID {
