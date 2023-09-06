@@ -317,6 +317,7 @@ interface Config {
   aeadProtect: boolean;
   allowUnauthenticatedMessages: boolean;
   allowUnauthenticatedStream: boolean;
+  allowForwardedMessages: boolean;
   checksumRequired: boolean;
   minRSABits: number;
   passwordCollisionCheck: boolean;
@@ -706,6 +707,7 @@ interface SubkeyOptions {
   keyExpirationTime?: number;
   date?: Date;
   sign?: boolean;
+  forwarding?: boolean;
   config?: PartialConfig;
 }
 
