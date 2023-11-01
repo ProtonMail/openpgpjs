@@ -8,6 +8,7 @@ import * as elgamal from './elgamal';
 import * as elliptic from './elliptic';
 import * as dsa from './dsa';
 import * as hmac from './hmac';
+import * as pqc from './pqc';
 
 export default {
   /** @see module:crypto/public_key/rsa */
@@ -19,5 +20,6 @@ export default {
   /** @see module:crypto/public_key/dsa */
   dsa: dsa,
   /** @see module:crypto/public_key/hmac */
-  hmac: hmac
+  hmac: hmac,
+  pqc
 };
