@@ -86,6 +86,7 @@
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.2",
     "eckey-utils": "^0.7.14",
+    "crystals-kyber-js": "^1.0.0",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",

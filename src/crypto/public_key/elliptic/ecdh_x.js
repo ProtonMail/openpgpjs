@@ -87,11 +87,11 @@ export async function validateParams(algo, A, k) {
  * @async
  */
 export async function encrypt(algo, data, recipientA) {
+  const { ephemeralPublicKey } = await generateEphemeralKeyPair(algo);
+  const sharedSecret = await getSharedSecret(algo, recipientA);
+
   switch (algo) {
     case enums.publicKey.x25519: {
-      const ephemeralSecretKey = getRandomBytes(32);
-      const sharedSecret = x25519.scalarMult(ephemeralSecretKey, recipientA);
-      const { publicKey: ephemeralPublicKey } = x25519.box.keyPair.fromSecretKey(ephemeralSecretKey);
       const hkdfInput = util.concatUint8Array([
         ephemeralPublicKey,
         recipientA,
@@ -104,10 +104,6 @@ export async function encrypt(algo, data, recipientA) {
       return { ephemeralPublicKey, wrappedKey };
     }
     case enums.publicKey.x448: {
-      const x448 = await util.getNobleCurve(enums.publicKey.x448);
-      const ephemeralSecretKey = x448.utils.randomPrivateKey();
-      const sharedSecret = x448.getSharedSecret(ephemeralSecretKey, recipientA);
-      const ephemeralPublicKey = x448.getPublicKey(ephemeralSecretKey);
       const hkdfInput = util.concatUint8Array([
         ephemeralPublicKey,
         recipientA,
@@ -176,6 +172,38 @@ export function getPayloadSize(algo) {
     case enums.publicKey.x448:
       return 56;
 
+    default:
+      throw new Error('Unsupported ECDH algorithm');
+  }
+}
+
+export async function generateEphemeralKeyPair(algo) {
+  switch (algo) {
+    case enums.publicKey.x25519: {
+      const ephemeralSecretKey = getRandomBytes(getPayloadSize(algo));
+      const { publicKey: ephemeralPublicKey } = x25519.box.keyPair.fromSecretKey(ephemeralSecretKey);
+      return { ephemeralPublicKey, ephemeralSecretKey };
+    }
+    case enums.publicKey.x448: {
+      const x448 = await util.getNobleCurve(enums.publicKey.x448);
+      const ephemeralSecretKey = x448.utils.randomPrivateKey();
+      const ephemeralPublicKey = x448.getPublicKey(ephemeralSecretKey);
+      return { ephemeralSecretKey, ephemeralPublicKey };
+    }
+
+    default:
+      throw new Error('Unsupported ECDH algorithm');
+  }
+}
+
+export async function getSharedSecret(algo, secretKey, recipientPublicKey) {
+  switch (algo) {
+    case enums.publicKey.x25519:
+      return x25519.scalarMult(secretKey, recipientPublicKey);
+    case enums.publicKey.x448: {
+      const x448 = await util.getNobleCurve(enums.publicKey.x448);
+      return x448.getSharedSecret(secretKey, recipientPublicKey);
+    }
     default:
       throw new Error('Unsupported ECDH algorithm');
   }
