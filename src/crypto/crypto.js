@@ -243,7 +243,7 @@ export function parsePublicKeyParams(algo, bytes) {
     }
     case enums.publicKey.pqc_mlkem_x25519: {
       const eccPublicKey = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.x25519)); read += eccPublicKey.length;
-      const mlkemPublicKey = util.readExactSubarray(bytes, read, read + (1184 / 8)); read += mlkemPublicKey.length;
+      const mlkemPublicKey = util.readExactSubarray(bytes, read, read + 1184); read += mlkemPublicKey.length;
       return { read, publicParams: { eccPublicKey, mlkemPublicKey } };
     }
     default:
@@ -319,7 +319,7 @@ export function parsePrivateKeyParams(algo, bytes, publicParams) {
     }
     case enums.publicKey.pqc_mlkem_x25519: {
       const eccSecretKey = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.x25519)); read += eccSecretKey.length;
-      const mlkemSecretKey = util.readExactSubarray(bytes, read, read + (2400 / 8)); read += mlkemSecretKey.length;
+      const mlkemSecretKey = util.readExactSubarray(bytes, read, read + 2400); read += mlkemSecretKey.length;
       return { read, privateParams: { eccSecretKey, mlkemSecretKey } };
     }
     default:
@@ -387,7 +387,7 @@ export function parseEncSessionKeyParams(algo, bytes) {
     }
     case enums.publicKey.pqc_mlkem_x25519: {
       const eccCipherText = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.x25519)); read += eccCipherText.length;
-      const mlkemCipherText = util.readExactSubarray(bytes, read, read + (1088 / 8)); read += mlkemCipherText.length;
+      const mlkemCipherText = util.readExactSubarray(bytes, read, read + 1088); read += mlkemCipherText.length;
       const C = new ShortByteString(); read += C.read(bytes.subarray(read));
       return { eccCipherText, mlkemCipherText, C }; // eccCipherText || mlkemCipherText || len(C) || C
     }
