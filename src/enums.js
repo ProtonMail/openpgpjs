@@ -108,6 +108,9 @@ export default {
     ed25519: 27,
     /** Ed448 (Sign only) */
     ed448: 28,
+    /** Post-quantum ML-KEM-768 + X25519 */
+    pqc_mlkem_x25519: 29,
+
     /** Persistent symmetric keys: encryption algorithm */
     aead: 100,
     /** Persistent symmetric keys: authentication algorithm */

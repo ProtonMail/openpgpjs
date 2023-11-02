@@ -14,7 +14,7 @@ import testEAX from './eax';
 import testOCB from './ocb';
 import testRSA from './rsa';
 import testValidate from './validate';
-import testPQC from './pqc';
+import testPQC from './postQuantum';
 
 export default () => describe('Crypto', function () {
   testBigInteger();

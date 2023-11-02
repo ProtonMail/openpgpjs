@@ -38,7 +38,6 @@ import util from '../util';
 import OID from '../type/oid';
 import { UnsupportedError } from '../packet/packet';
 import ECDHXSymmetricKey from '../type/ecdh_x_symkey';
-import * as aesKW from './aes_kw';
 
 /**
  * Encrypts data using specified algorithm and public key parameters.
@@ -97,14 +96,10 @@ export async function publicKeyEncrypt(keyAlgo, symmetricAlgo, publicParams, pri
       const c = await modeInstance.encrypt(data, iv, new Uint8Array());
       return { aeadMode: new AEADEnum(aeadMode), iv, c: new ShortByteString(c) };
     }
-    case enums.publicKey.kem_x25519: {
+    case enums.publicKey.pqc_mlkem_x25519: {
       const { eccPublicKey, mlkemPublicKey } = publicParams;
-      const { eccKeyShare, eccCipherText } = await publicKey.pqc.kem.ecdhX.encaps(keyAlgo, eccPublicKey);
-      const { mlkemKeyShare, mlkemCipherText } = await publicKey.pqc.kem.ml.encaps(keyAlgo, mlkemPublicKey);
-      const fixedInfo = new Uint8Array([keyAlgo]);
-      const kek = await publicKey.pqc.kem.multiKeyCombine(eccKeyShare, eccCipherText, mlkemKeyShare, mlkemCipherText, fixedInfo, 256);
-      const C = await aesKW.wrap(enums.symmetric.aes256, kek, data);
-      return { eccCipherText, mlkemCipherText, C: new ShortByteString(C) }; // eccCipherText || mlkemCipherText || len(C) || C
+      const { eccCipherText, mlkemCipherText, wrappedKey } = await publicKey.postQuantum.kem.encrypt(keyAlgo, eccPublicKey, mlkemPublicKey, data);
+      return { eccCipherText, mlkemCipherText, C: new ShortByteString(wrappedKey) };
     }
     default:
       return [];
@@ -169,16 +164,11 @@ export async function publicKeyDecrypt(keyAlgo, publicKeyParams, privateKeyParam
       const modeInstance = await mode(algoValue, keyMaterial);
       return modeInstance.decrypt(c.data, iv, new Uint8Array());
     }
-    case enums.publicKey.kem_x25519: {
+    case enums.publicKey.pqc_mlkem_x25519: {
       const { eccSecretKey, mlkemSecretKey } = privateKeyParams;
       const { eccPublicKey } = publicKeyParams;
       const { eccCipherText, mlkemCipherText, C } = sessionKeyParams;
-      const eccKeyShare = await publicKey.pqc.kem.ecdhX.decaps(keyAlgo, eccCipherText, eccSecretKey, eccPublicKey);
-      const mlkemKeyShare = await publicKey.pqc.kem.ml.decaps(keyAlgo, mlkemCipherText, mlkemSecretKey);
-      const fixedInfo = new Uint8Array([keyAlgo]);
-      const kek = await publicKey.pqc.kem.multiKeyCombine(eccKeyShare, eccCipherText, mlkemKeyShare, mlkemCipherText, fixedInfo, 256);
-      const sessionKey = await aesKW.unwrap(enums.symmetric.aes256, kek, C.data);
-      return sessionKey;
+      return publicKey.postQuantum.kem.decrypt(keyAlgo, eccCipherText, mlkemCipherText, eccSecretKey, eccPublicKey, mlkemSecretKey, C.data);
     }
     default:
       throw new Error('Unknown public key encryption algorithm.');
@@ -251,7 +241,7 @@ export function parsePublicKeyParams(algo, bytes) {
       const digest = bytes.subarray(read, read + digestLength); read += digestLength;
       return { read: read, publicParams: { cipher: algo, digest } };
     }
-    case enums.publicKey.kem_x25519: {
+    case enums.publicKey.pqc_mlkem_x25519: {
       const eccPublicKey = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.x25519)); read += eccPublicKey.length;
       const mlkemPublicKey = util.readExactSubarray(bytes, read, read + (1184 / 8)); read += mlkemPublicKey.length;
       return { read, publicParams: { eccPublicKey, mlkemPublicKey } };
@@ -327,7 +317,7 @@ export function parsePrivateKeyParams(algo, bytes, publicParams) {
       const keyMaterial = bytes.subarray(read, read + keySize); read += keySize;
       return { read, privateParams: { hashSeed, keyMaterial } };
     }
-    case enums.publicKey.kem_x25519: {
+    case enums.publicKey.pqc_mlkem_x25519: {
       const eccSecretKey = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.x25519)); read += eccSecretKey.length;
       const mlkemSecretKey = util.readExactSubarray(bytes, read, read + (2400 / 8)); read += mlkemSecretKey.length;
       return { read, privateParams: { eccSecretKey, mlkemSecretKey } };
@@ -395,7 +385,7 @@ export function parseEncSessionKeyParams(algo, bytes) {
 
       return { aeadMode, iv, c };
     }
-    case enums.publicKey.kem_x25519: {
+    case enums.publicKey.pqc_mlkem_x25519: {
       const eccCipherText = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.x25519)); read += eccCipherText.length;
       const mlkemCipherText = util.readExactSubarray(bytes, read, read + (1088 / 8)); read += mlkemCipherText.length;
       const C = new ShortByteString(); read += C.read(bytes.subarray(read));
@@ -421,7 +411,7 @@ export function serializeParams(algo, params) {
     enums.publicKey.x448,
     enums.publicKey.aead,
     enums.publicKey.hmac,
-    enums.publicKey.kem_x25519
+    enums.publicKey.pqc_mlkem_x25519
   ]);
   const orderedParams = Object.keys(params).map(name => {
     const param = params[name];
@@ -488,14 +478,11 @@ export async function generateParams(algo, bits, oid, symmetric) {
       const keyMaterial = generateSessionKey(symmetric);
       return createSymmetricParams(keyMaterial, new SymAlgoEnum(symmetric));
     }
-    case enums.publicKey.kem_x25519: {
-      const eccKeyPair = await publicKey.elliptic.ecdhX.generate(enums.publicKey.x25519); // todo move into kem_echd_x?
-      const mlkemKeyPair = await publicKey.pqc.kem.ml.generate(algo);
-      return {
-        privateParams: { eccSecretKey: eccKeyPair.k, mlkemSecretKey: mlkemKeyPair.decapsulationKey },
-        publicParams: { eccPublicKey: eccKeyPair.A, mlkemPublicKey: mlkemKeyPair.encapsulationKey }
-      };
-    }
+    case enums.publicKey.pqc_mlkem_x25519:
+      return publicKey.postQuantum.kem.generate(algo).then(({ eccSecretKey, eccPublicKey, mlkemSecretKey, mlkemPublicKey }) => ({
+        privateParams: { eccSecretKey, mlkemSecretKey },
+        publicParams: { eccPublicKey, mlkemPublicKey }
+      }));
     case enums.publicKey.dsa:
     case enums.publicKey.elgamal:
       throw new Error('Unsupported algorithm for key generation.');
