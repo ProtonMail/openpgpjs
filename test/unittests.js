@@ -64,8 +64,8 @@ describe('Unit Tests', function () {
     });
   }
 
-  // runWorkerTests();
+  runWorkerTests();
   runCryptoTests();
-  // runGeneralTests();
-  // runSecurityTests();
+  runGeneralTests();
+  runSecurityTests();
 });

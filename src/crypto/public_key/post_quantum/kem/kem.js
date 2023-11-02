@@ -1,11 +1,33 @@
-import util from '../../../util';
-import * as ecdhX from './kem_ecdh_x';
-import * as ml from './kem_ml';
+import * as eccKem from './ecc_kem';
+import * as mlKem from './ml_kem';
+import * as aesKW from '../../../aes_kw';
+import util from '../../../../util';
+import enums from '../../../../enums';
 
-const kem = { ecdhX, ml, multiKeyCombine };
-export {
-  kem
-};
+export async function generate(algo) {
+  const { eccPublicKey, eccSecretKey } = await eccKem.generate(algo);
+  const { mlkemPublicKey, mlkemSecretKey } = await mlKem.generate(algo);
+
+  return { eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSecretKey };
+}
+
+export async function encrypt(algo, eccPublicKey, mlkemPublicKey, sessioneKeyData) {
+  const { eccKeyShare, eccCipherText } = await eccKem.encaps(algo, eccPublicKey);
+  const { mlkemKeyShare, mlkemCipherText } = await mlKem.encaps(algo, mlkemPublicKey);
+  const fixedInfo = new Uint8Array([algo]);
+  const kek = await multiKeyCombine(eccKeyShare, eccCipherText, mlkemKeyShare, mlkemCipherText, fixedInfo, 256);
+  const wrappedKey = await aesKW.wrap(enums.symmetric.aes256, kek, sessioneKeyData); // C
+  return { eccCipherText, mlkemCipherText, wrappedKey };
+}
+
+export async function decrypt(algo, eccCipherText, mlkemCipherText, eccSecretKey, eccPublicKey, mlkemSecretKey, encryptedSessionKeyData) {
+  const eccKeyShare = await eccKem.decaps(algo, eccCipherText, eccSecretKey, eccPublicKey);
+  const mlkemKeyShare = await mlKem.decaps(algo, mlkemCipherText, mlkemSecretKey);
+  const fixedInfo = new Uint8Array([algo]);
+  const kek = await multiKeyCombine(eccKeyShare, eccCipherText, mlkemKeyShare, mlkemCipherText, fixedInfo, 256);
+  const sessionKey = await aesKW.unwrap(enums.symmetric.aes256, kek, encryptedSessionKeyData);
+  return sessionKey;
+}
 
 async function multiKeyCombine(eccKeyShare, eccCipherText, mlkemKeyShare, mlkemCipherText, fixedInfo, outputBits) {
   //   multiKeyCombine(eccKeyShare, eccCipherText,
