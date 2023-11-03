@@ -4,6 +4,7 @@ chaiUse(chaiAsPromised);
 
 import openpgp from '../initOpenpgp.js';
 import { generateParams, publicKeyEncrypt, publicKeyDecrypt } from '../../src/crypto/crypto.js';
+import { sign, verify } from '../../src/crypto/signature.js';
 
 export default () => describe('PQC', function () {
   it('ML-KEM + X25519 - Generate/encrypt/decrypt', async function () {
@@ -132,5 +133,15 @@ gxa3/Jm0tqLUHAEAyyV5473sqcilThIyTdMYnpu1TCFoX+IBvj3U4JML+As=
       decryptionKeys: privateKey
     });
     expect(decryptedData).to.equal('hello world\n');
+  });
+
+  it('ML-DSA + Ed25519 - Generate/sign/verify', async function () {
+    const digest = new Uint8Array(32).fill(1);
+    const hashAlgo = openpgp.enums.hash.sha256;
+
+    const { privateParams, publicParams } = await generateParams(openpgp.enums.publicKey.pqc_mldsa_ed25519);
+    const signature = await sign(openpgp.enums.publicKey.pqc_mldsa_ed25519, hashAlgo, publicParams, privateParams, null, digest);
+    const verified = await verify(openpgp.enums.publicKey.pqc_mldsa_ed25519, hashAlgo, signature, publicParams, null, null, digest);
+    expect(verified).to.be.true;
   });
 });

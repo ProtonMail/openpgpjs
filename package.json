@@ -62,6 +62,7 @@
     "postversion": "git push && git push --tags && npm publish"
   },
   "devDependencies": {
+    "@asanrom/dilithium": "^1.1.0",    
     "@openpgp/asmcrypto.js": "^3.1.0",
     "@openpgp/crystals-kyber-js": "^1.1.1-0",
     "@openpgp/jsdoc": "^3.6.11",

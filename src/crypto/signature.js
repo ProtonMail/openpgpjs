@@ -69,6 +69,12 @@ export function parseSignatureParams(algo, signature) {
       const mac = new ShortByteString(); read += mac.read(signature.subarray(read));
       return { read, signatureParams: { mac } };
     }
+    case enums.publicKey.pqc_mldsa_ed25519: {
+      const eccSignatureSize = 2 * publicKey.elliptic.eddsa.getPayloadSize(algo);
+      const eccSignature = util.readExactSubarray(signature, read, read + eccSignatureSize); read += eccSignature.length;
+      const mldsaSignature = util.readExactSubarray(signature, read, read + 3293); read += mldsaSignature.length;
+      return { read, signatureParams: { eccSignature, mldsaSignature } };
+    }
     default:
       throw new UnsupportedError('Unknown signature algorithm.');
   }
@@ -128,6 +134,10 @@ export async function verify(algo, hashAlgo, signature, publicParams, privatePar
       const { cipher: algo } = publicParams;
       const { keyMaterial } = privateParams;
       return publicKey.hmac.verify(algo.getValue(), keyMaterial, signature.mac.data, hashed);
+    }
+    case enums.publicKey.pqc_mldsa_ed25519: {
+      const { eccPublicKey, mldsaPublicKey } = publicParams;
+      return publicKey.postQuantum.signature.verify(algo, hashAlgo, eccPublicKey, mldsaPublicKey, hashed, signature);
     }
     default:
       throw new Error('Unknown signature algorithm.');
@@ -189,6 +199,11 @@ export async function sign(algo, hashAlgo, publicKeyParams, privateKeyParams, da
       const { keyMaterial } = privateKeyParams;
       const mac = await publicKey.hmac.sign(algo.getValue(), keyMaterial, hashed);
       return { mac: new ShortByteString(mac) };
+    }
+    case enums.publicKey.pqc_mldsa_ed25519: {
+      const { eccPublicKey } = publicKeyParams;
+      const { eccSecretKey, mldsaSecretKey } = privateKeyParams;
+      return publicKey.postQuantum.signature.sign(algo, hashAlgo, eccSecretKey, eccPublicKey, mldsaSecretKey, hashed);
     }
     default:
       throw new Error('Unknown signature algorithm.');
