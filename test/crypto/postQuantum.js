@@ -5,8 +5,8 @@ chaiUse(chaiAsPromised);
 import openpgp from '../initOpenpgp.js';
 import { generateParams, publicKeyEncrypt, publicKeyDecrypt } from '../../src/crypto/crypto.js';
 
-export default () => describe('PQC - Kyber + X25519', function () {
-  it('Generate/encaps/decaps', async function () {
+export default () => describe('PQC', function () {
+  it('ML-KEM + X25519 - Generate/encrypt/decrypt', async function () {
     const sessionKey = { data: new Uint8Array(16).fill(1), algorithm: 'aes128' };
 
     const { privateParams, publicParams } = await generateParams(openpgp.enums.publicKey.pqc_mlkem_x25519);
