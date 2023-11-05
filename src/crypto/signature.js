@@ -70,7 +70,7 @@ export function parseSignatureParams(algo, signature) {
       return { read, signatureParams: { mac } };
     }
     case enums.publicKey.pqc_mldsa_ed25519: {
-      const eccSignatureSize = 2 * publicKey.elliptic.eddsa.getPayloadSize(algo);
+      const eccSignatureSize = 2 * publicKey.elliptic.eddsa.getPayloadSize(enums.publicKey.ed25519);
       const eccSignature = util.readExactSubarray(signature, read, read + eccSignatureSize); read += eccSignature.length;
       const mldsaSignature = util.readExactSubarray(signature, read, read + 3293); read += mldsaSignature.length;
       return { read, signatureParams: { eccSignature, mldsaSignature } };

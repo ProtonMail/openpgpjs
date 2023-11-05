@@ -322,7 +322,7 @@ export function parsePrivateKeyParams(algo, bytes, publicParams) {
       const mlkemSecretKey = util.readExactSubarray(bytes, read, read + 2400); read += mlkemSecretKey.length;
       return { read, privateParams: { eccSecretKey, mlkemSecretKey } };
     }
-    case enums.publicKey.pqc_mldsa_x25519: {
+    case enums.publicKey.pqc_mldsa_ed25519: {
       const eccSecretKey = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.ed25519)); read += eccSecretKey.length;
       const mldsaSecretKey = util.readExactSubarray(bytes, read, read + 4000); read += mldsaSecretKey.length;
       return { read, privateParams: { eccSecretKey, mldsaSecretKey } };
