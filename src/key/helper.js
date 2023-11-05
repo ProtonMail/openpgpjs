@@ -403,6 +403,13 @@ export function sanitizeKeyOptions(options, subkeyDefaults = {}) {
   }
 
   switch (options.type) {
+    case 'pqc':
+      if (options.sign) {
+        throw new Error('Post-quantum signing algorithms are not yet supported.');
+      } else {
+        options.algorithm = enums.publicKey.pqc_mlkem_x25519;
+      }
+      break;
     case 'ecc': // NB: this case also handles legacy eddsa and x25519 keys, based on `options.curve`
       try {
         options.curve = enums.write(enums.curve, options.curve);
