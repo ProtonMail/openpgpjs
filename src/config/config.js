@@ -292,5 +292,12 @@ export default {
    * @memberof module:config
    * @property {Set<String>} rejectCurves {@link module:enums.curve}
    */
-  rejectCurves: new Set([enums.curve.secp256k1])
+  rejectCurves: new Set([enums.curve.secp256k1]),
+  /**
+   * Whether to validate generated EdDSA signatures before returning them, to ensure they are not faulty signatures.
+   * This check will make signing 2-3 times slower.
+   * Faulty signatures may be generated (in principle) if random bitflips occur at specific points in the signature
+   * computation, and could be used to recover the signer's secret key given a second signature over the same data.
+   */
+  checkEdDSAFaultySignatures: true
 };

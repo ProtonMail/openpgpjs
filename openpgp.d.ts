@@ -353,7 +353,7 @@ interface Config {
   rejectPublicKeyAlgorithms: Set<enums.publicKey>;
   rejectCurves: Set<enums.curve>;
 }
-export var config: Config;
+export var config: Config & { checkEdDSAFaultySignatures: boolean }; // option only supported if set at the global openpgp.config level
 
 // PartialConfig has the same properties as Config, but declared as optional.
 // This interface is relevant for top-level functions, which accept a subset of configuration options

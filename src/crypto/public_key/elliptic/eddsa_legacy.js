@@ -25,6 +25,7 @@ import nacl from '@openpgp/tweetnacl';
 import util from '../../../util';
 import enums from '../../../enums';
 import hash from '../../hash';
+import defaultConfig from '../../../config';
 
 /**
  * Sign a message using the provided legacy EdDSA key
@@ -47,6 +48,20 @@ export async function sign(oid, hashAlgo, message, publicKey, privateKey, hashed
   }
   const secretKey = util.concatUint8Array([privateKey, publicKey.subarray(1)]);
   const signature = nacl.sign.detached(hashed, secretKey);
+  if (defaultConfig.checkEdDSAFaultySignatures && !nacl.sign.detached.verify(hashed, signature, publicKey.subarray(1))) {
+    /**
+     * Detect faulty signatures caused by random bitflips during `crypto_sign` which could lead to private key extraction
+     * if two signatures over the same message are obtained.
+     * See https://github.com/jedisct1/libsodium/issues/170.
+     * If the input data is not deterministic, e.g. thanks to the random salt in v6 OpenPGP signatures (not yet implemented),
+     * then the generated signature is always safe, and the verification step is skipped.
+     * Otherwise, we need to verify the generated to ensure that no bitflip occured:
+     * - in M between the computation of `r` and `h`.
+     * - in the public key before computing `h`
+     * The verification step is almost 2-3 times as slow as signing, but it's faster than re-signing + re-deriving the public key for separate checks.
+     */
+    throw new Error('Transient signing failure');
+  }
   // EdDSA signature params are returned in little-endian format
   return {
     r: signature.subarray(0, 32),
