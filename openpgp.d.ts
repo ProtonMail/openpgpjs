@@ -723,6 +723,13 @@ export function armor(messagetype: enums.armor, body: object, partindex?: number
  */
 export function unarmor(input: string, config?: Config): Promise<{ text: string, data: Stream<Uint8Array>, type: enums.armor }>;
 
+export declare class Argon2S2K {
+  constructor(config: Config);
+  salt: Uint8Array;
+  /** @throws Argon2OutOfMemoryError */
+  produceKey(passphrase: string, keySize: number): Promise<Uint8Array>;
+}
+
 interface KDFParamsData {
   version: number;
   hash: enums.hash;
