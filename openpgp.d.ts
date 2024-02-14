@@ -945,6 +945,13 @@ export namespace enums {
   }
 }
 
+export declare class Argon2S2K {
+  constructor(config: Config);
+  salt: Uint8Array;
+  /** @throws Argon2OutOfMemoryError */
+  produceKey(passphrase: string, keySize: number): Promise<Uint8Array>;
+}
+
 interface KDFParamsData {
   version: number;
   hash: enums.hash;
