@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: TrustPacket</title>
+    <title>JSDoc: Module: js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: TrustPacket</h1>
+    <h1 class="page-title">Module: js</h1>
 
     
 
@@ -28,50 +28,16 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>TrustPacket<span class="signature">()</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description"><p>Implementation of the Trust Packet (Tag 12)</p>
-<p><a href="https://tools.ietf.org/html/rfc4880#section-5.10">RFC4880 5.10</a>:
-The Trust packet is used only within keyrings and is not normally
-exported.  Trust packets contain data that record the user's
-specifications of which key holders are trustworthy introducers,
-along with other information that implementing software uses for
-trust information.  The format of Trust packets is defined by a given
-implementation.</p>
-<p>Trust packets SHOULD NOT be emitted to output streams that are
-transferred to other users, and they SHOULD be ignored on any input
-other than local keyring files.</p></div>
-        
-    
 </header>
 
 <article>
     <div class="container-overview">
     
         
+            <div class="description"><p>Wrapper for enums</p></div>
+        
 
-    
-    <h2>Constructor</h2>
-    
-
-    
-    <h4 class="name" id="TrustPacket"><span class="type-signature"></span>new TrustPacket<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 
 
 <dl class="details">
@@ -105,7 +71,7 @@ other than local keyring files.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/packet/trust.js">packet/trust.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/packet/trust.js#L19">line 19</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js#L19">line 19</a>
     </li></ul></dd>
     
 
@@ -117,29 +83,18 @@ other than local keyring files.</p></div>
 </dl>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
     
     </div>
 
     
 
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li><a href="module-enums.html">module:enums</a></li>
+        </ul>
     
 
     
@@ -161,7 +116,7 @@ other than local keyring files.</p></div>
     
 
     
-    <h4 class="name" id="read"><span class="type-signature"></span>read<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getName"><span class="type-signature"></span>getName<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
     
@@ -169,8 +124,7 @@ other than local keyring files.</p></div>
 
 
 <div class="description">
-    <p>Parsing function for a trust packet (tag 12).
-Currently not implemented as we ignore trust packets</p>
+    <p>Get the name of the enum entry</p>
 </div>
 
 
@@ -216,7 +170,7 @@ Currently not implemented as we ignore trust packets</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/packet/trust.js">packet/trust.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/packet/trust.js#L28">line 28</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js#L60">line 60</a>
     </li></ul></dd>
     
 
@@ -241,6 +195,391 @@ Currently not implemented as we ignore trust packets</p>
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The name string</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getValue"><span class="type-signature"></span>getValue<span class="signature">()</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Get the integer value of the enum entry</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js#L68">line 68</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The integer value</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="read"><span class="type-signature"></span>read<span class="signature">(input)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Read an enum entry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Uint8Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Where to read the symmetric algo from</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js#L42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="write"><span class="type-signature"></span>write<span class="signature">()</span><span class="type-signature"> &rarr; {Uint8Array}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Write an enum as an integer</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/enum.js#L52">line 52</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>An integer representing the algorithm</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Uint8Array</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 

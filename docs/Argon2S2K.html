@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: S2K</title>
+    <title>JSDoc: Class: Argon2S2K</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: S2K</h1>
+    <h1 class="page-title">Class: Argon2S2K</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>S2K<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Argon2S2K<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="S2K"><span class="type-signature"></span>new S2K<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Argon2S2K"><span class="type-signature"></span>new Argon2S2K<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -152,7 +152,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js">type/s2k.js</a>, <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js#L41">line 41</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js">type/s2k/argon2.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js#L32">line 32</a>
     </li></ul></dd>
     
 
@@ -202,87 +202,14 @@
 
         
             
-<h4 class="name" id="algorithm"><span class="type-signature"></span>algorithm<span class="type-signature"> :<a href="module-enums.html#.hash">module:enums.hash</a>|0</span></h4>
+<h4 class="name" id="encodedM"><span class="type-signature"></span>encodedM<span class="type-signature"> :Integer</span></h4>
 
 
 
 
 <div class="description">
-    <p>Hash function identifier, or 0 for gnu-dummy keys</p>
+    <p>exponent indicating memory size</p>
 </div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type"><a href="module-enums.html#.hash">module:enums.hash</a></span>
-|
-
-<span class="param-type">0</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js">type/s2k.js</a>, <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js#L46">line 46</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="c"><span class="type-signature"></span>c<span class="type-signature"> :Integer</span></h4>
-
-
-
 
 
 
@@ -331,7 +258,81 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js">type/s2k.js</a>, <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js#L53">line 53</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js">type/s2k/argon2.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js#L43">line 43</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="p"><span class="type-signature"></span>p<span class="type-signature"> :Integer</span></h4>
+
+
+
+
+<div class="description">
+    <p>degree of parallelism (lanes)</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Integer</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js">type/s2k/argon2.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js#L41">line 41</a>
     </li></ul></dd>
     
 
@@ -355,7 +356,7 @@
 
 
 <div class="description">
-    <p>Eight bytes of salt in a binary string.</p>
+    <p>16 bytes of salt</p>
 </div>
 
 
@@ -405,7 +406,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js">type/s2k.js</a>, <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js#L57">line 57</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js">type/s2k/argon2.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js#L37">line 37</a>
     </li></ul></dd>
     
 
@@ -423,13 +424,13 @@
 
         
             
-<h4 class="name" id="type"><span class="type-signature"></span>type<span class="type-signature"> :String</span></h4>
+<h4 class="name" id="t"><span class="type-signature"></span>t<span class="type-signature"> :Integer</span></h4>
 
 
 
 
 <div class="description">
-    <p>enums.s2k identifier or 'gnu-dummy'</p>
+    <p>number of passes</p>
 </div>
 
 
@@ -438,7 +439,7 @@
     <ul>
         <li>
             
-<span class="param-type">String</span>
+<span class="param-type">Integer</span>
 
 
         </li>
@@ -479,7 +480,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js">type/s2k.js</a>, <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js#L51">line 51</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js">type/s2k/argon2.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js#L39">line 39</a>
     </li></ul></dd>
     
 
@@ -611,7 +612,7 @@ hashAlgorithm</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js">type/s2k.js</a>, <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js#L157">line 157</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js">type/s2k/argon2.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js#L90">line 90</a>
     </li></ul></dd>
     
 
@@ -634,14 +635,31 @@ hashAlgorithm</p>
 
 
 
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        
+<span class="param-type">Argon2OutOfMemoryError</span>
+|
+
+<span class="param-type">Errors</span>
+
+
+    
+    </div>
+
+
+    
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    <p>Produced key with a length corresponding to.
-hashAlgorithm hash length</p>
+    <p>Produced key with a length corresponding to <code>keySize</code></p>
 </div>
 
 
@@ -678,7 +696,7 @@ hashAlgorithm hash length</p>
 
 
 <div class="description">
-    <p>Parsing function for a string-to-key specifier (<a href="https://tools.ietf.org/html/rfc4880#section-3.7">RFC 4880 3.7</a>).</p>
+    <p>Parsing function for argon2 string-to-key specifier.</p>
 </div>
 
 
@@ -730,7 +748,7 @@ hashAlgorithm hash length</p>
 
             
 
-            <td class="description last"><p>Payload of string-to-key specifier</p></td>
+            <td class="description last"><p>Payload of argon2 string-to-key specifier</p></td>
         </tr>
 
     
@@ -773,7 +791,7 @@ hashAlgorithm hash length</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js">type/s2k.js</a>, <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js#L72">line 72</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js">type/s2k/argon2.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js#L55">line 55</a>
     </li></ul></dd>
     
 
@@ -885,7 +903,7 @@ hashAlgorithm hash length</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js">type/s2k.js</a>, <a href="https://github.com/openpgpjs/openpgpjs/blob/v5.11.0/src/type/s2k.js#L124">line 124</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js">type/s2k/argon2.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v5.11.1-0/src/type/s2k/argon2.js#L72">line 72</a>
     </li></ul></dd>
     
 
@@ -953,7 +971,7 @@ hashAlgorithm hash length</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Functions</h3><ul><li><a href="global.html#aes">aes</a></li><li><a href="global.html#armor">armor</a></li><li><a href="global.html#createCleartextMessage">createCleartextMessage</a></li><li><a href="global.html#createKey">createKey</a></li><li><a href="global.html#createMessage">createMessage</a></li><li><a href="global.html#decrypt">decrypt</a></li><li><a href="global.html#decryptKey">decryptKey</a></li><li><a href="global.html#decryptSessionKeys">decryptSessionKeys</a></li><li><a href="global.html#encrypt">encrypt</a></li><li><a href="global.html#encryptKey">encryptKey</a></li><li><a href="global.html#encryptSessionKey">encryptSessionKey</a></li><li><a href="global.html#formatObject">formatObject</a></li><li><a href="global.html#generateKey">generateKey</a></li><li><a href="global.html#generateSessionKey">generateSessionKey</a></li><li><a href="global.html#newPacketFromTag">newPacketFromTag</a></li><li><a href="global.html#readCleartextMessage">readCleartextMessage</a></li><li><a href="global.html#readKey">readKey</a></li><li><a href="global.html#readKeys">readKeys</a></li><li><a href="global.html#readMessage">readMessage</a></li><li><a href="global.html#readPrivateKey">readPrivateKey</a></li><li><a href="global.html#readPrivateKeys">readPrivateKeys</a></li><li><a href="global.html#readSignature">readSignature</a></li><li><a href="global.html#reformatKey">reformatKey</a></li><li><a href="global.html#revokeKey">revokeKey</a></li><li><a href="global.html#sign">sign</a></li><li><a href="global.html#unarmor">unarmor</a></li><li><a href="global.html#verify">verify</a></li><li><a href="global.html#wrapKeyObject">wrapKeyObject</a></li></ul><h3>Modules</h3><ul><li><a href="module-config.html">config</a></li><li><a href="module-enums.html">enums</a></li><li><a href="module-type_x25519x448_symkey.html">type/x25519x448_symkey</a></li></ul><h3>Classes</h3><ul><li><a href="AEADEncryptedDataPacket.html">AEADEncryptedDataPacket</a></li><li><a href="CleartextMessage.html">CleartextMessage</a></li><li><a href="CompressedDataPacket.html">CompressedDataPacket</a></li><li><a href="Key.html">Key</a></li><li><a href="LiteralDataPacket.html">LiteralDataPacket</a></li><li><a href="MarkerPacket.html">MarkerPacket</a></li><li><a href="Message.html">Message</a></li><li><a href="module-key_Subkey-Subkey.html">Subkey</a></li><li><a href="module-key_User-User.html">User</a></li><li><a href="module-type_kdf_params-KDFParams.html">KDFParams</a></li><li><a href="module-type_keyid-KeyID.html">KeyID</a></li><li><a href="module-type_s2k-S2K.html">S2K</a></li><li><a href="OnePassSignaturePacket.html">OnePassSignaturePacket</a></li><li><a href="PacketList.html">PacketList</a></li><li><a href="PrivateKey.html">PrivateKey</a></li><li><a href="PublicKey.html">PublicKey</a></li><li><a href="PublicKeyEncryptedSessionKeyPacket.html">PublicKeyEncryptedSessionKeyPacket</a></li><li><a href="PublicKeyPacket.html">PublicKeyPacket</a></li><li><a href="PublicSubkeyPacket.html">PublicSubkeyPacket</a></li><li><a href="SecretKeyPacket.html">SecretKeyPacket</a></li><li><a href="SecretSubkeyPacket.html">SecretSubkeyPacket</a></li><li><a href="Signature.html">Signature</a></li><li><a href="SignaturePacket.html">SignaturePacket</a></li><li><a href="SymEncryptedIntegrityProtectedDataPacket.html">SymEncryptedIntegrityProtectedDataPacket</a></li><li><a href="SymEncryptedSessionKeyPacket.html">SymEncryptedSessionKeyPacket</a></li><li><a href="SymmetricallyEncryptedDataPacket.html">SymmetricallyEncryptedDataPacket</a></li><li><a href="TrustPacket.html">TrustPacket</a></li><li><a href="UserAttributePacket.html">UserAttributePacket</a></li><li><a href="UserIDPacket.html">UserIDPacket</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Functions</h3><ul><li><a href="global.html#aes">aes</a></li><li><a href="global.html#armor">armor</a></li><li><a href="global.html#createCleartextMessage">createCleartextMessage</a></li><li><a href="global.html#createKey">createKey</a></li><li><a href="global.html#createMessage">createMessage</a></li><li><a href="global.html#decrypt">decrypt</a></li><li><a href="global.html#decryptKey">decryptKey</a></li><li><a href="global.html#decryptSessionKeys">decryptSessionKeys</a></li><li><a href="global.html#encrypt">encrypt</a></li><li><a href="global.html#encryptKey">encryptKey</a></li><li><a href="global.html#encryptSessionKey">encryptSessionKey</a></li><li><a href="global.html#formatObject">formatObject</a></li><li><a href="global.html#generateKey">generateKey</a></li><li><a href="global.html#generateSessionKey">generateSessionKey</a></li><li><a href="global.html#newPacketFromTag">newPacketFromTag</a></li><li><a href="global.html#newS2KFromConfig">newS2KFromConfig</a></li><li><a href="global.html#newS2KFromType">newS2KFromType</a></li><li><a href="global.html#readCleartextMessage">readCleartextMessage</a></li><li><a href="global.html#readKey">readKey</a></li><li><a href="global.html#readKeys">readKeys</a></li><li><a href="global.html#readMessage">readMessage</a></li><li><a href="global.html#readPrivateKey">readPrivateKey</a></li><li><a href="global.html#readPrivateKeys">readPrivateKeys</a></li><li><a href="global.html#readSignature">readSignature</a></li><li><a href="global.html#reformatKey">reformatKey</a></li><li><a href="global.html#revokeKey">revokeKey</a></li><li><a href="global.html#sign">sign</a></li><li><a href="global.html#unarmor">unarmor</a></li><li><a href="global.html#verify">verify</a></li><li><a href="global.html#wrapKeyObject">wrapKeyObject</a></li></ul><h3>Modules</h3><ul><li><a href="module-config.html">config</a></li><li><a href="module-enums.html">enums</a></li><li><a href="module-type_x25519x448_symkey.html">type/x25519x448_symkey</a></li><li><a href="type_enum.module_js.html">js</a></li></ul><h3>Classes</h3><ul><li><a href="AEADEncryptedDataPacket.html">AEADEncryptedDataPacket</a></li><li><a href="Argon2S2K.html">Argon2S2K</a></li><li><a href="CleartextMessage.html">CleartextMessage</a></li><li><a href="CompressedDataPacket.html">CompressedDataPacket</a></li><li><a href="Key.html">Key</a></li><li><a href="LiteralDataPacket.html">LiteralDataPacket</a></li><li><a href="MarkerPacket.html">MarkerPacket</a></li><li><a href="Message.html">Message</a></li><li><a href="module-key_Subkey-Subkey.html">Subkey</a></li><li><a href="module-key_User-User.html">User</a></li><li><a href="module-type_kdf_params-KDFParams.html">KDFParams</a></li><li><a href="module-type_keyid-KeyID.html">KeyID</a></li><li><a href="module-type_s2k-GenericS2K.html">GenericS2K</a></li><li><a href="OnePassSignaturePacket.html">OnePassSignaturePacket</a></li><li><a href="PacketList.html">PacketList</a></li><li><a href="PrivateKey.html">PrivateKey</a></li><li><a href="PublicKey.html">PublicKey</a></li><li><a href="PublicKeyEncryptedSessionKeyPacket.html">PublicKeyEncryptedSessionKeyPacket</a></li><li><a href="PublicKeyPacket.html">PublicKeyPacket</a></li><li><a href="PublicSubkeyPacket.html">PublicSubkeyPacket</a></li><li><a href="SecretKeyPacket.html">SecretKeyPacket</a></li><li><a href="SecretSubkeyPacket.html">SecretSubkeyPacket</a></li><li><a href="Signature.html">Signature</a></li><li><a href="SignaturePacket.html">SignaturePacket</a></li><li><a href="SymEncryptedIntegrityProtectedDataPacket.html">SymEncryptedIntegrityProtectedDataPacket</a></li><li><a href="SymEncryptedSessionKeyPacket.html">SymEncryptedSessionKeyPacket</a></li><li><a href="SymmetricallyEncryptedDataPacket.html">SymmetricallyEncryptedDataPacket</a></li><li><a href="TrustPacket.html">TrustPacket</a></li><li><a href="UserAttributePacket.html">UserAttributePacket</a></li><li><a href="UserIDPacket.html">UserIDPacket</a></li></ul>
 </nav>
 
 <br class="clear">
