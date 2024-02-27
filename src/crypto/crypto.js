@@ -99,7 +99,8 @@ export async function publicKeyEncrypt(keyAlgo, symmetricAlgo, publicParams, pri
     case enums.publicKey.pqc_mlkem_x25519: {
       const { eccPublicKey, mlkemPublicKey } = publicParams;
       const { eccCipherText, mlkemCipherText, wrappedKey } = await publicKey.postQuantum.kem.encrypt(keyAlgo, eccPublicKey, mlkemPublicKey, data);
-      return { eccCipherText, mlkemCipherText, C: new ShortByteString(wrappedKey) };
+      const C = ECDHXSymmetricKey.fromObject({ algorithm: symmetricAlgo, wrappedKey });
+      return { eccCipherText, mlkemCipherText, C };
     }
     default:
       return [];
@@ -168,7 +169,7 @@ export async function publicKeyDecrypt(keyAlgo, publicKeyParams, privateKeyParam
       const { eccSecretKey, mlkemSecretKey } = privateKeyParams;
       const { eccPublicKey } = publicKeyParams;
       const { eccCipherText, mlkemCipherText, C } = sessionKeyParams;
-      return publicKey.postQuantum.kem.decrypt(keyAlgo, eccCipherText, mlkemCipherText, eccSecretKey, eccPublicKey, mlkemSecretKey, C.data);
+      return publicKey.postQuantum.kem.decrypt(keyAlgo, eccCipherText, mlkemCipherText, eccSecretKey, eccPublicKey, mlkemSecretKey, C.wrappedKey);
     }
     default:
       throw new Error('Unknown public key encryption algorithm.');
@@ -388,7 +389,7 @@ export function parseEncSessionKeyParams(algo, bytes) {
     case enums.publicKey.pqc_mlkem_x25519: {
       const eccCipherText = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.x25519)); read += eccCipherText.length;
       const mlkemCipherText = util.readExactSubarray(bytes, read, read + 1088); read += mlkemCipherText.length;
-      const C = new ShortByteString(); read += C.read(bytes.subarray(read));
+      const C = new ECDHXSymmetricKey(); C.read(bytes.subarray(read));
       return { eccCipherText, mlkemCipherText, C }; // eccCipherText || mlkemCipherText || len(C) || C
     }
     default:

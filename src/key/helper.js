@@ -456,7 +456,8 @@ export function validateDecryptionKeyPacket(keyPacket, signature, config) {
     case enums.publicKey.elgamal:
     case enums.publicKey.ecdh:
     case enums.publicKey.x25519:
-    case enums.publicKey.x448: {
+    case enums.publicKey.x448:
+    case enums.publicKey.pqc_mlkem_x25519: {
       const isValidSigningKeyPacket = !signature.keyFlags || (signature.keyFlags[0] & enums.keyFlags.signData) !== 0;
       if (isValidSigningKeyPacket && config.allowInsecureDecryptionWithSigningKeys) {
         // This is only relevant for RSA keys, all other signing algorithms cannot decrypt
