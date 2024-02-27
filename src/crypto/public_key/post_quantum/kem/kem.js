@@ -47,14 +47,17 @@ async function multiKeyCombine(eccKeyShare, eccCipherText, mlkemKeyShare, mlkemC
   //                         "OpenPGPCompositeKeyDerivationFunction"
   //   counter             - the fixed 4 byte value 0x00000001
   //   customizationString - the UTF-8 encoding of the string "KDF"
-  const { kmac256 } = await import('@openpgp/noble-hashes/sha3-addons');
+  if (outputBits !== 256) {
+    throw new Error('Unsupported output size');
+  }
+  const { kmac256 } = await import('@noble/hashes/sha3-addons');
   // const { eccKeyShare, eccCiphertext } = await publicKey.pqc.kem.ecdhX(keyAlgo, publicParams.A);
   // const { keyShare: mlkemKeyShare, cipherText: mlkemCipherText } = await publicKey.pqc.kem.ml(keyAlgo, publicParams.publicKey);
   const eccData = util.concatUint8Array([eccKeyShare, eccCipherText]); // eccKeyShare || eccCipherText
   const mlkemData = util.concatUint8Array([mlkemKeyShare, mlkemCipherText]); //mlkemKeyShare || mlkemCipherText
   // const fixedInfo = new Uint8Array([keyAlgo]);
   const encData = util.concatUint8Array([
-    new Uint8Array([1, 0, 0, 0]),
+    new Uint8Array([0, 0, 0, 1]),
     eccData,
     mlkemData,
     fixedInfo
