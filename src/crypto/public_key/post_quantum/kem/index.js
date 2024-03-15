@@ -1,1 +1,1 @@
-export { generate, encrypt, decrypt } from './kem';
+export { generate, encrypt, decrypt, validateParams } from './kem';
