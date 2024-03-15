@@ -51,3 +51,12 @@ export async function decaps(eccAlgo, eccCipherText, eccSecretKey, eccPublicKey)
       throw new Error('Unsupported KEM algorithm');
   }
 }
+
+export async function validateParams(algo, eccPublicKey, eccSecretKey) {
+  switch (algo) {
+    case enums.publicKey.pqc_mlkem_x25519:
+      return ecdhX.validateParams(enums.publicKey.x25519, eccPublicKey, eccSecretKey);
+    default:
+      throw new Error('Unsupported KEM algorithm');
+  }
+}

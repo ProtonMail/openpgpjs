@@ -575,8 +575,11 @@ export async function validateParams(algo, publicParams, privateParams) {
       return keySize === keyMaterial.length &&
         util.equalsUint8Array(digest, await hash.sha256(hashSeed));
     }
-    case enums.publicKey.pqc_mlkem_x25519:
-      throw new Error('TODO');
+    case enums.publicKey.pqc_mlkem_x25519: {
+      const { eccSecretKey, mlkemSecretKey } = privateParams;
+      const { eccPublicKey, mlkemPublicKey } = publicParams;
+      return publicKey.postQuantum.kem.validateParams(algo, eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSecretKey);
+    }
     default:
       throw new Error('Unknown public key algorithm.');
   }
