@@ -71,3 +71,10 @@ async function multiKeyCombine(eccKeyShare, eccCipherText, mlkemKeyShare, mlkemC
 
   return mb;
 }
+
+export async function validateParams(algo, eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSecretKey) {
+  const eccValidationPromise = eccKem.validateParams(algo, eccPublicKey, eccSecretKey);
+  const mlkemValidationPromise = mlKem.validateParams(algo, mlkemPublicKey, mlkemSecretKey);
+  const valid = await eccValidationPromise && await mlkemValidationPromise;
+  return valid;
+}
