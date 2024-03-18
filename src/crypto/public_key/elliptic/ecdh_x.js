@@ -87,16 +87,16 @@ export async function validateParams(algo, A, k) {
  * @async
  */
 export async function encrypt(algo, data, recipientA) {
+  const { ephemeralPublicKey, ephemeralSecretKey } = await generateEphemeralKeyPair(algo);
+  const sharedSecret = await getSharedSecret(algo, ephemeralSecretKey, recipientA);
+  const hkdfInput = util.concatUint8Array([
+    ephemeralPublicKey,
+    recipientA,
+    sharedSecret
+  ]);
+
   switch (algo) {
     case enums.publicKey.x25519: {
-      const ephemeralSecretKey = getRandomBytes(32);
-      const sharedSecret = x25519.scalarMult(ephemeralSecretKey, recipientA);
-      const { publicKey: ephemeralPublicKey } = x25519.box.keyPair.fromSecretKey(ephemeralSecretKey);
-      const hkdfInput = util.concatUint8Array([
-        ephemeralPublicKey,
-        recipientA,
-        sharedSecret
-      ]);
       const cipherAlgo = enums.symmetric.aes128;
       const { keySize } = getCipherParams(cipherAlgo);
       const encryptionKey = await computeHKDF(enums.hash.sha256, hkdfInput, new Uint8Array(), HKDF_INFO.x25519, keySize);
@@ -104,15 +104,6 @@ export async function encrypt(algo, data, recipientA) {
       return { ephemeralPublicKey, wrappedKey };
     }
     case enums.publicKey.x448: {
-      const x448 = await util.getNobleCurve(enums.publicKey.x448);
-      const ephemeralSecretKey = x448.utils.randomPrivateKey();
-      const sharedSecret = x448.getSharedSecret(ephemeralSecretKey, recipientA);
-      const ephemeralPublicKey = x448.getPublicKey(ephemeralSecretKey);
-      const hkdfInput = util.concatUint8Array([
-        ephemeralPublicKey,
-        recipientA,
-        sharedSecret
-      ]);
       const cipherAlgo = enums.symmetric.aes256;
       const { keySize } = getCipherParams(enums.symmetric.aes256);
       const encryptionKey = await computeHKDF(enums.hash.sha512, hkdfInput, new Uint8Array(), HKDF_INFO.x448, keySize);
@@ -137,27 +128,21 @@ export async function encrypt(algo, data, recipientA) {
  * @async
  */
 export async function decrypt(algo, ephemeralPublicKey, wrappedKey, A, k) {
+  const sharedSecret = await getSharedSecret(algo, k, ephemeralPublicKey);
+  const hkdfInput = util.concatUint8Array([
+    ephemeralPublicKey,
+    A,
+    sharedSecret
+  ]);
+
   switch (algo) {
     case enums.publicKey.x25519: {
-      const sharedSecret = x25519.scalarMult(k, ephemeralPublicKey);
-      const hkdfInput = util.concatUint8Array([
-        ephemeralPublicKey,
-        A,
-        sharedSecret
-      ]);
       const cipherAlgo = enums.symmetric.aes128;
       const { keySize } = getCipherParams(cipherAlgo);
       const encryptionKey = await computeHKDF(enums.hash.sha256, hkdfInput, new Uint8Array(), HKDF_INFO.x25519, keySize);
       return aesKW.unwrap(cipherAlgo, encryptionKey, wrappedKey);
     }
     case enums.publicKey.x448: {
-      const x448 = await util.getNobleCurve(enums.publicKey.x448);
-      const sharedSecret = x448.getSharedSecret(k, ephemeralPublicKey);
-      const hkdfInput = util.concatUint8Array([
-        ephemeralPublicKey,
-        A,
-        sharedSecret
-      ]);
       const cipherAlgo = enums.symmetric.aes256;
       const { keySize } = getCipherParams(enums.symmetric.aes256);
       const encryptionKey = await computeHKDF(enums.hash.sha512, hkdfInput, new Uint8Array(), HKDF_INFO.x448, keySize);
@@ -176,6 +161,38 @@ export function getPayloadSize(algo) {
     case enums.publicKey.x448:
       return 56;
 
+    default:
+      throw new Error('Unsupported ECDH algorithm');
+  }
+}
+
+export async function generateEphemeralKeyPair(algo) {
+  switch (algo) {
+    case enums.publicKey.x25519: {
+      const ephemeralSecretKey = getRandomBytes(getPayloadSize(algo));
+      const { publicKey: ephemeralPublicKey } = x25519.box.keyPair.fromSecretKey(ephemeralSecretKey);
+      return { ephemeralPublicKey, ephemeralSecretKey };
+    }
+    case enums.publicKey.x448: {
+      const x448 = await util.getNobleCurve(enums.publicKey.x448);
+      const ephemeralSecretKey = x448.utils.randomPrivateKey();
+      const ephemeralPublicKey = x448.getPublicKey(ephemeralSecretKey);
+      return { ephemeralSecretKey, ephemeralPublicKey };
+    }
+
+    default:
+      throw new Error('Unsupported ECDH algorithm');
+  }
+}
+
+export async function getSharedSecret(algo, secretKey, recipientPublicKey) {
+  switch (algo) {
+    case enums.publicKey.x25519:
+      return x25519.scalarMult(secretKey, recipientPublicKey);
+    case enums.publicKey.x448: {
+      const x448 = await util.getNobleCurve(enums.publicKey.x448);
+      return x448.getSharedSecret(secretKey, recipientPublicKey);
+    }
     default:
       throw new Error('Unsupported ECDH algorithm');
   }

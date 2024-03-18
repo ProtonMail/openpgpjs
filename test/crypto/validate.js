@@ -314,6 +314,38 @@ export default () => {
     });
   });
 
+  describe('PQC parameter validation', function() {
+    let pqcEncryptionSubkey;
+    before(async () => {
+      const key = await generatePrivateKeyObject({ type: 'symmetric', subkeys: [{ type: 'pqc' }] });
+      pqcEncryptionSubkey = key.subkeys[0];
+    });
+
+    async function cloneSubeyPacket(subkey) {
+      const subkeyPacket = new openpgp.SecretSubkeyPacket();
+      await subkeyPacket.read(subkey.keyPacket.write());
+      return subkeyPacket;
+    }
+
+    it('generated params are valid', async function() {
+      await expect(pqcEncryptionSubkey.keyPacket.validate()).to.not.be.rejected;
+    });
+
+    it('detect invalid ML-KEM public key part', async function() {
+      const keyPacket = await cloneSubeyPacket(pqcEncryptionSubkey);
+      const { mlkemPublicKey } = keyPacket.publicParams;
+      mlkemPublicKey[0]++;
+      await expect(keyPacket.validate()).to.be.rejectedWith('Key is invalid');
+    });
+
+    it('detect invalid ECC-KEM key part', async function() {
+      const keyPacket = await cloneSubeyPacket(pqcEncryptionSubkey);
+      const { eccPublicKey } = keyPacket.publicParams;
+      eccPublicKey[0]++;
+      await expect(keyPacket.validate()).to.be.rejectedWith('Key is invalid');
+    });
+  });
+
   describe('DSA parameter validation', function() {
     let dsaKey;
     before(async () => {
