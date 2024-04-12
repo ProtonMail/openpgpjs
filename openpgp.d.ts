@@ -724,6 +724,8 @@ export function armor(messagetype: enums.armor, body: object, partindex?: number
 export function unarmor(input: string, config?: Config): Promise<{ text: string, data: Stream<Uint8Array>, type: enums.armor }>;
 
 export declare class Argon2S2K {
+  static reloadWasmModule(): void;
+  static ARGON2_WASM_MEMORY_THRESHOLD_RELOAD: number;
   constructor(config: Config);
   salt: Uint8Array;
   /** @throws Argon2OutOfMemoryError */
