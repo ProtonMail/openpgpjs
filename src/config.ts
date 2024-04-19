@@ -30,6 +30,7 @@ export interface Config {
   showVersion: boolean;
   showComment: boolean;
   aeadProtect: boolean;
+  ignoreSEIPDv2FeatureFlag: boolean;
   parseAEADEncryptedV4KeysAsLegacy: boolean;
   allowUnauthenticatedMessages: boolean;
   allowUnauthenticatedStream: boolean;
@@ -95,6 +96,14 @@ const config: Config = {
    * @property {Boolean} aeadProtect
    */
   aeadProtect: false,
+  /**
+   * Whether to disable encrypton using SEIPDv2 even if the encryption keys include the SEIPDv2 feature flag.
+   * If true, SEIPDv1 (i.e. no AEAD) packets are always used instead.
+   * SEIPDv2 is a more secure and faster choice, but it is not necessarily compatible with other libs and our mobile apps.
+   * @memberof module:config
+   * @property {Boolean} ignoreSEIPDv2FeatureFlag
+   */
+  ignoreSEIPDv2FeatureFlag: false,
   /**
    * When reading OpenPGP v4 private keys (e.g. those generated in OpenPGP.js when not setting `config.v5Keys = true`)
    * which were encrypted by OpenPGP.js v5 (or older) using `config.aeadProtect = true`,
