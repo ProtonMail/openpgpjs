@@ -324,6 +324,7 @@ interface Config {
   showVersion: boolean;
   showComment: boolean;
   aeadProtect: boolean;
+  ignoreSEIPDv2FeatureFlag: boolean;
   allowUnauthenticatedMessages: boolean;
   allowUnauthenticatedStream: boolean;
   allowForwardedMessages: boolean;
