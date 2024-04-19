@@ -4,7 +4,7 @@ import path from 'path';
 import { writeFileSync, unlinkSync } from 'fs';
 import { fork } from 'child_process';
 import { fileURLToPath } from 'url';
-import * as openpgp from 'openpgp';
+import * as openpgp from '@protontech/openpgp';
 
 /**
  * Benchmark max memory usage recorded during execution of the given function.
