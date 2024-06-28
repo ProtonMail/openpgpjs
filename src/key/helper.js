@@ -334,6 +334,13 @@ export function sanitizeKeyOptions(options, subkeyDefaults = {}) {
   }
 
   switch (options.type) {
+    case 'pqc':
+      if (options.sign) {
+        throw new Error('Post-quantum signing algorithms are not yet supported.');
+      } else {
+        options.algorithm = enums.publicKey.pqc_mlkem_x25519;
+      }
+      break;
     case 'ecc': // NB: this case also handles legacy eddsa and x25519 keys, based on `options.curve`
       try {
         options.curve = enums.write(enums.curve, options.curve);
@@ -433,7 +440,8 @@ export function validateDecryptionKeyPacket(keyPacket, signature, config) {
     case enums.publicKey.elgamal:
     case enums.publicKey.ecdh:
     case enums.publicKey.x25519:
-    case enums.publicKey.x448: {
+    case enums.publicKey.x448:
+    case enums.publicKey.pqc_mlkem_x25519: {
       const isValidSigningKeyPacket = !signature.keyFlags || (signature.keyFlags[0] & enums.keyFlags.signData) !== 0;
       if (isValidSigningKeyPacket && config.allowInsecureDecryptionWithSigningKeys) {
         // This is only relevant for RSA keys, all other signing algorithms cannot decrypt
