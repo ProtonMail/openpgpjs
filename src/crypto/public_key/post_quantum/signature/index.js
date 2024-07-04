@@ -1,1 +1,1 @@
-export { generate, sign, verify } from './signature';
+export { generate, sign, verify, validateParams } from './signature';

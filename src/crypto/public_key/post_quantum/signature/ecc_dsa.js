@@ -35,3 +35,12 @@ export async function verify(signatureAlgo, hashAlgo, eccPublicKey, dataDigest, 
       throw new Error('Unsupported signature algorithm');
   }
 }
+
+export async function validateParams(algo, eccPublicKey, eccSecretKey) {
+  switch (algo) {
+    case enums.publicKey.pqc_mldsa_ed25519:
+      return eddsa.validateParams(enums.publicKey.ed25519, eccPublicKey, eccSecretKey);
+    default:
+      throw new Error('Unsupported signature algorithm');
+  }
+}
