@@ -3,14 +3,8 @@ import enums from '../../../../enums';
 export async function generate(algo) {
   switch (algo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
-      const { DilithiumKeyPair, DilithiumLevel } = await import('@asanrom/dilithium');
-
-      const level = DilithiumLevel.get(3);
-      const keyPair = DilithiumKeyPair.generate(level);
-
-      const mldsaSecretKey = keyPair.getPrivateKey().getBytes();
-      const mldsaPublicKey = keyPair.getPublicKey().getBytes();
-
+      const { ml_dsa65 } = await import('@noble/post-quantum/ml-dsa');
+      const { secretKey: mldsaSecretKey, publicKey: mldsaPublicKey } = ml_dsa65.keygen();
       return { mldsaSecretKey, mldsaPublicKey };
     }
     default:
@@ -21,10 +15,8 @@ export async function generate(algo) {
 export async function sign(algo, mldsaSecretKey, dataDigest) {
   switch (algo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
-      const { DilithiumPrivateKey, DilithiumLevel } = await import('@asanrom/dilithium');
-      const level = DilithiumLevel.get(3);
-      const secretKey = DilithiumPrivateKey.fromBytes(mldsaSecretKey, level);
-      const mldsaSignature = secretKey.sign(dataDigest).getBytes();
+      const { ml_dsa65 } = await import('@noble/post-quantum/ml-dsa');
+      const mldsaSignature = ml_dsa65.sign(mldsaSecretKey, dataDigest);
       return { mldsaSignature };
     }
     default:
@@ -35,11 +27,8 @@ export async function sign(algo, mldsaSecretKey, dataDigest) {
 export async function verify(algo, mldsaPublicKey, dataDigest, mldsaSignature) {
   switch (algo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
-      const { DilithiumPublicKey, DilithiumSignature, DilithiumLevel } = await import('@asanrom/dilithium');
-      const level = DilithiumLevel.get(3);
-      const publicKey = DilithiumPublicKey.fromBytes(mldsaPublicKey, level);
-      const signature = DilithiumSignature.fromBytes(mldsaSignature, level);
-      return publicKey.verifySignature(dataDigest, signature);
+      const { ml_dsa65 } = await import('@noble/post-quantum/ml-dsa');
+      return ml_dsa65.verify(mldsaPublicKey, dataDigest, mldsaSignature);
     }
     default:
       throw new Error('Unsupported signature algorithm');
