@@ -39,3 +39,10 @@ export async function verify(signatureAlgo, hashAlgo, eccPublicKey, mldsaPublicK
       throw new Error('Unsupported signature algorithm');
   }
 }
+
+export async function validateParams(algo, eccPublicKey, eccSecretKey, mldsaPublicKey, mldsaSecretKey) {
+  const eccValidationPromise = eccdsa.validateParams(algo, eccPublicKey, eccSecretKey);
+  const mldsaValidationPromise = mldsa.validateParams(algo, mldsaPublicKey, mldsaSecretKey);
+  const valid = await eccValidationPromise && await mldsaValidationPromise;
+  return valid;
+}
