@@ -4,9 +4,8 @@ import util from '../../../../util';
 export async function generate(algo) {
   switch (algo) {
     case enums.publicKey.pqc_mlkem_x25519: {
-      const { MlKem768 } = await import('@openpgp/crystals-kyber-js');
-      const kyberInstance = new MlKem768();
-      const [encapsulationKey, decapsulationKey] = await kyberInstance.generateKeyPair();
+      const { ml_kem768 } = await import('@noble/post-quantum/ml-kem');
+      const { publicKey: encapsulationKey, secretKey: decapsulationKey } = ml_kem768.keygen();
 
       return { mlkemPublicKey: encapsulationKey, mlkemSecretKey: decapsulationKey };
     }
@@ -18,9 +17,8 @@ export async function generate(algo) {
 export async function encaps(algo, mlkemRecipientPublicKey) {
   switch (algo) {
     case enums.publicKey.pqc_mlkem_x25519: {
-      const { MlKem768 } = await import('@openpgp/crystals-kyber-js');
-      const kyberInstance = new MlKem768();
-      const [mlkemCipherText, mlkemKeyShare] = await kyberInstance.encap(mlkemRecipientPublicKey);
+      const { ml_kem768 } = await import('@noble/post-quantum/ml-kem');
+      const { cipherText: mlkemCipherText, sharedSecret: mlkemKeyShare } = ml_kem768.encapsulate(mlkemRecipientPublicKey);
 
       return { mlkemCipherText, mlkemKeyShare };
     }
@@ -32,9 +30,8 @@ export async function encaps(algo, mlkemRecipientPublicKey) {
 export async function decaps(algo, mlkemCipherText, mlkemSecretKey) {
   switch (algo) {
     case enums.publicKey.pqc_mlkem_x25519: {
-      const { MlKem768 } = await import('@openpgp/crystals-kyber-js');
-      const kyberInstance = new MlKem768();
-      const mlkemKeyShare = await kyberInstance.decap(mlkemCipherText, mlkemSecretKey);
+      const { ml_kem768 } = await import('@noble/post-quantum/ml-kem');
+      const mlkemKeyShare = ml_kem768.decapsulate(mlkemCipherText, mlkemSecretKey);
 
       return mlkemKeyShare;
     }
