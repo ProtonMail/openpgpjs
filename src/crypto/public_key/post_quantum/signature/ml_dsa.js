@@ -1,4 +1,5 @@
 import enums from '../../../../enums';
+import util from '../../../../util';
 import hash from '../../../hash';
 import { getRandomBytes } from '../../../random';
 
@@ -18,7 +19,8 @@ export async function sign(algo, mldsaSecretKey, dataDigest) {
   switch (algo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { ml_dsa65 } = await import('@noble/post-quantum/ml-dsa');
-      const mldsaSignature = ml_dsa65.sign(mldsaSecretKey, dataDigest);
+      const dataDigestWithContext = util.concatUint8Array([new Uint8Array([0, 0]), dataDigest]);
+      const mldsaSignature = ml_dsa65.sign(mldsaSecretKey, dataDigestWithContext);
       return { mldsaSignature };
     }
     default:
@@ -30,7 +32,8 @@ export async function verify(algo, mldsaPublicKey, dataDigest, mldsaSignature) {
   switch (algo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { ml_dsa65 } = await import('@noble/post-quantum/ml-dsa');
-      return ml_dsa65.verify(mldsaPublicKey, dataDigest, mldsaSignature);
+      const dataDigestWithContext = util.concatUint8Array([new Uint8Array([0, 0]), dataDigest]);
+      return ml_dsa65.verify(mldsaPublicKey, dataDigestWithContext, mldsaSignature);
     }
     default:
       throw new Error('Unsupported signature algorithm');
