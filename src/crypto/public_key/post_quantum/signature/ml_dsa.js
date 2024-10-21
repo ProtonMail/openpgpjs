@@ -1,12 +1,32 @@
 import enums from '../../../../enums';
-import hash from '../../../hash';
+import util from '../../../../util';
 import { getRandomBytes } from '../../../random';
 
 export async function generate(algo) {
   switch (algo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
+      const mldsaSeed = getRandomBytes(32);
+      const { mldsaSecretKey, mldsaPublicKey } = await expandSecretSeed(algo, mldsaSeed);
+
+      return { mldsaSeed, mldsaSecretKey, mldsaPublicKey };
+    }
+    default:
+      throw new Error('Unsupported signature algorithm');
+  }
+}
+
+/**
+ * Expand ML-DSA secret seed and retrieve the secret and public key material
+ * @param {module:enums.publicKey} algo - Public key algorithm
+ * @param {Uint8Array} seed - secret seed to expand
+ * @returns {Promise<{ mldsaPublicKey: Uint8Array, mldsaSecretKey: Uint8Array }>}
+ */
+export async function expandSecretSeed(algo, seed) {
+  switch (algo) {
+    case enums.publicKey.pqc_mldsa_ed25519: {
       const { ml_dsa65 } = await import('@noble/post-quantum/ml-dsa');
-      const { secretKey: mldsaSecretKey, publicKey: mldsaPublicKey } = ml_dsa65.keygen();
+      const { secretKey: mldsaSecretKey, publicKey: mldsaPublicKey } = ml_dsa65.keygen(seed);
+
       return { mldsaSecretKey, mldsaPublicKey };
     }
     default:
@@ -37,14 +57,11 @@ export async function verify(algo, mldsaPublicKey, dataDigest, mldsaSignature) {
   }
 }
 
-export async function validateParams(algo, mldsaPublicKey, mldsaSecretKey) {
+export async function validateParams(algo, mldsaPublicKey, mldsaSeed) {
   switch (algo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
-      const message = getRandomBytes(8);
-      const hashAlgo = enums.hash.sha256;
-      const hashed = await hash.digest(hashAlgo, message);
-      const { mldsaSignature } = await sign(algo, mldsaSecretKey, hashed);
-      return verify(algo, mldsaPublicKey, hashed, mldsaSignature);
+      const { mldsaPublicKey: expectedPublicKey } = await expandSecretSeed(algo, mldsaSeed);
+      return util.equalsUint8Array(mldsaPublicKey, expectedPublicKey);
     }
     default:
       throw new Error('Unsupported signature algorithm');

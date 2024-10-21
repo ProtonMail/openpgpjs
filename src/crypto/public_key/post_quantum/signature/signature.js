@@ -6,8 +6,8 @@ export async function generate(algo) {
   switch (algo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { eccSecretKey, eccPublicKey } = await eccdsa.generate(algo);
-      const { mldsaSecretKey, mldsaPublicKey } = await mldsa.generate(algo);
-      return { eccSecretKey, eccPublicKey, mldsaSecretKey, mldsaPublicKey };
+      const { mldsaSeed, mldsaSecretKey, mldsaPublicKey } = await mldsa.generate(algo);
+      return { eccSecretKey, eccPublicKey, mldsaSeed, mldsaSecretKey, mldsaPublicKey };
     }
     default:
       throw new Error('Unsupported signature algorithm');
@@ -40,9 +40,9 @@ export async function verify(signatureAlgo, hashAlgo, eccPublicKey, mldsaPublicK
   }
 }
 
-export async function validateParams(algo, eccPublicKey, eccSecretKey, mldsaPublicKey, mldsaSecretKey) {
+export async function validateParams(algo, eccPublicKey, eccSecretKey, mldsaPublicKey, mldsaSeed) {
   const eccValidationPromise = eccdsa.validateParams(algo, eccPublicKey, eccSecretKey);
-  const mldsaValidationPromise = mldsa.validateParams(algo, mldsaPublicKey, mldsaSecretKey);
+  const mldsaValidationPromise = mldsa.validateParams(algo, mldsaPublicKey, mldsaSeed);
   const valid = await eccValidationPromise && await mldsaValidationPromise;
   return valid;
 }
