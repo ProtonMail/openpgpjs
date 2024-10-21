@@ -81,7 +81,7 @@ async function cloneKeyPacket(key) {
 }
 
 async function generatePrivateKeyObject(options) {
-  const config = { rejectCurves: new Set() };
+  const config = { rejectCurves: new Set(), ...options.config };
   const { privateKey } = await openpgp.generateKey({ ...options, userIDs: [{ name: 'Test', email: 'test@test.com' }], format: 'object', config });
   return privateKey;
 }
@@ -317,7 +317,7 @@ export default () => {
   describe('PQC parameter validation', function() {
     let pqcEncryptionSubkey;
     before(async () => {
-      const key = await generatePrivateKeyObject({ type: 'symmetric', subkeys: [{ type: 'pqc' }] });
+      const key = await generatePrivateKeyObject({ type: 'symmetric', subkeys: [{ type: 'pqc' }], config: { v6Keys: true } });
       pqcEncryptionSubkey = key.subkeys[0];
     });
 

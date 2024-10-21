@@ -532,6 +532,9 @@ class SecretKeyPacket extends PublicKeyPacket {
     )) {
       throw new Error(`Cannot generate v6 keys of type 'ecc' with curve ${curve}. Generate a key of type 'curve25519' instead`);
     }
+    if (this.version !== 6 && this.algorithm === enums.publicKey.pqc_mlkem_x25519) {
+      throw new Error(`Cannot generate v${this.version} keys of type 'pqc'. Generate a v6 key instead`);
+    }
     const { privateParams, publicParams } = await crypto.generateParams(this.algorithm, bits, curve, symmetric);
     this.privateParams = privateParams;
     this.publicParams = publicParams;
