@@ -221,7 +221,7 @@ class SecretKeyPacket extends PublicKeyPacket {
         }
       }
       try {
-        const { read, privateParams } = crypto.parsePrivateKeyParams(this.algorithm, cleartext, this.publicParams);
+        const { read, privateParams } = await crypto.parsePrivateKeyParams(this.algorithm, cleartext, this.publicParams);
         if (read < cleartext.length) {
           throw new Error('Error reading MPIs');
         }
@@ -479,7 +479,7 @@ class SecretKeyPacket extends PublicKeyPacket {
     }
 
     try {
-      const { privateParams } = crypto.parsePrivateKeyParams(this.algorithm, cleartext, this.publicParams);
+      const { privateParams } = await crypto.parsePrivateKeyParams(this.algorithm, cleartext, this.publicParams);
       this.privateParams = privateParams;
     } catch (err) {
       throw new Error('Error reading MPIs');

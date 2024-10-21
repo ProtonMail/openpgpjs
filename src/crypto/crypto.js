@@ -264,7 +264,7 @@ export function parsePublicKeyParams(algo, bytes) {
  * @param {Object} publicParams - (ECC and symmetric only) public params, needed to format some private params
  * @returns {{ read: Number, privateParams: Object }} Number of read bytes plus the key parameters referenced by name.
  */
-export function parsePrivateKeyParams(algo, bytes, publicParams) {
+export async function parsePrivateKeyParams(algo, bytes, publicParams) {
   let read = 0;
   switch (algo) {
     case enums.publicKey.rsaEncrypt:
@@ -325,8 +325,9 @@ export function parsePrivateKeyParams(algo, bytes, publicParams) {
     }
     case enums.publicKey.pqc_mlkem_x25519: {
       const eccSecretKey = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.x25519)); read += eccSecretKey.length;
-      const mlkemSecretKey = util.readExactSubarray(bytes, read, read + 2400); read += mlkemSecretKey.length;
-      return { read, privateParams: { eccSecretKey, mlkemSecretKey } };
+      const mlkemSeed = util.readExactSubarray(bytes, read, read + 64); read += mlkemSeed.length;
+      const { mlkemSecretKey } = await publicKey.postQuantum.kem.mlkemExpandSecretSeed(algo, mlkemSeed);
+      return { read, privateParams: { eccSecretKey, mlkemSecretKey, mlkemSeed } };
     }
     case enums.publicKey.pqc_mldsa_ed25519: {
       const eccSecretKey = util.readExactSubarray(bytes, read, read + getCurvePayloadSize(enums.publicKey.ed25519)); read += eccSecretKey.length;
@@ -425,7 +426,16 @@ export function serializeParams(algo, params) {
     enums.publicKey.pqc_mlkem_x25519,
     enums.publicKey.pqc_mldsa_ed25519
   ]);
+
+  const excludedFields = {
+    [enums.publicKey.pqc_mlkem_x25519]: new Set(['mlkemSecretKey']) // only `mlkemSeed` is serialized
+  };
+
   const orderedParams = Object.keys(params).map(name => {
+    if (excludedFields[algo]?.has(name)) {
+      return new Uint8Array();
+    }
+
     const param = params[name];
     if (!util.isUint8Array(param)) return param.write();
     return algosWithNativeRepresentation.has(algo) ? param : util.uint8ArrayToMPI(param);
@@ -491,8 +501,8 @@ export async function generateParams(algo, bits, oid, symmetric) {
       return createSymmetricParams(keyMaterial, new SymAlgoEnum(symmetric));
     }
     case enums.publicKey.pqc_mlkem_x25519:
-      return publicKey.postQuantum.kem.generate(algo).then(({ eccSecretKey, eccPublicKey, mlkemSecretKey, mlkemPublicKey }) => ({
-        privateParams: { eccSecretKey, mlkemSecretKey },
+      return publicKey.postQuantum.kem.generate(algo).then(({ eccSecretKey, eccPublicKey, mlkemSeed, mlkemSecretKey, mlkemPublicKey }) => ({
+        privateParams: { eccSecretKey, mlkemSeed, mlkemSecretKey },
         publicParams: { eccPublicKey, mlkemPublicKey }
       }));
     case enums.publicKey.pqc_mldsa_ed25519:
@@ -592,9 +602,9 @@ export async function validateParams(algo, publicParams, privateParams) {
         util.equalsUint8Array(digest, await hash.sha256(hashSeed));
     }
     case enums.publicKey.pqc_mlkem_x25519: {
-      const { eccSecretKey, mlkemSecretKey } = privateParams;
+      const { eccSecretKey, mlkemSeed } = privateParams;
       const { eccPublicKey, mlkemPublicKey } = publicParams;
-      return publicKey.postQuantum.kem.validateParams(algo, eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSecretKey);
+      return publicKey.postQuantum.kem.validateParams(algo, eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSeed);
     }
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { eccSecretKey, mldsaSecretKey } = privateParams;

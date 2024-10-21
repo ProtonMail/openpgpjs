@@ -6,9 +6,9 @@ import enums from '../../../../enums';
 
 export async function generate(algo) {
   const { eccPublicKey, eccSecretKey } = await eccKem.generate(algo);
-  const { mlkemPublicKey, mlkemSecretKey } = await mlKem.generate(algo);
+  const { mlkemPublicKey, mlkemSeed, mlkemSecretKey } = await mlKem.generate(algo);
 
-  return { eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSecretKey };
+  return { eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSeed, mlkemSecretKey };
 }
 
 export async function encrypt(algo, eccPublicKey, mlkemPublicKey, sessioneKeyData) {
@@ -44,9 +44,9 @@ async function multiKeyCombine(algo, ecdhKeyShare, ecdhCipherText, ecdhPublicKey
   return kek;
 }
 
-export async function validateParams(algo, eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSecretKey) {
+export async function validateParams(algo, eccPublicKey, eccSecretKey, mlkemPublicKey, mlkemSeed) {
   const eccValidationPromise = eccKem.validateParams(algo, eccPublicKey, eccSecretKey);
-  const mlkemValidationPromise = mlKem.validateParams(algo, mlkemPublicKey, mlkemSecretKey);
+  const mlkemValidationPromise = mlKem.validateParams(algo, mlkemPublicKey, mlkemSeed);
   const valid = await eccValidationPromise && await mlkemValidationPromise;
   return valid;
 }
