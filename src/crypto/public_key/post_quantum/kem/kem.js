@@ -3,7 +3,6 @@ import * as mlKem from './ml_kem';
 import * as aesKW from '../../../aes_kw';
 import util from '../../../../util';
 import enums from '../../../../enums';
-import hash from '../../../hash';
 
 export async function generate(algo) {
   const { eccPublicKey, eccSecretKey } = await eccKem.generate(algo);
@@ -29,23 +28,19 @@ export async function decrypt(algo, eccCipherText, mlkemCipherText, eccSecretKey
 }
 
 async function multiKeyCombine(algo, ecdhKeyShare, ecdhCipherText, ecdhPublicKey, mlkemKeyShare, mlkemCipherText, mlkemPublicKey) {
-  const encData = util.concatUint8Array([
-    // counter
-    new Uint8Array([0, 0, 0, 1]),
-    // eccData
-    ecdhKeyShare,
-    ecdhCipherText,
-    ecdhPublicKey,
-    // mlkemData
-    mlkemKeyShare,
-    mlkemCipherText,
-    mlkemPublicKey,
-    // fixedInfo
-    new Uint8Array([algo]),
-    util.encodeUTF8('OpenPGPCompositeKDFv1') // domSeparation
-  ]);
+  const { kmac256 } = await import('@noble/hashes/sha3-addons');
 
-  const kek = await hash.digest(enums.hash.sha3_256, encData);
+  const key = util.concatUint8Array([mlkemKeyShare, ecdhKeyShare]);
+  const encData = util.concatUint8Array([
+    mlkemCipherText,
+    ecdhCipherText,
+    mlkemPublicKey,
+    ecdhPublicKey,
+    new Uint8Array([algo])
+  ]);
+  const domainSeparation = util.encodeUTF8('OpenPGPCompositeKDFv1');
+
+  const kek = kmac256(key, encData, { personalization: domainSeparation }); // output length: 256 bits
   return kek;
 }
 
