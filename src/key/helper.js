@@ -117,6 +117,12 @@ export async function createBindingSignature(subkey, primaryKey, options, config
  * @async
  */
 export async function getPreferredHashAlgo(targetKeys, signingKeyPacket, date = new Date(), targetUserIDs = [], config) {
+  if (signingKeyPacket.algorithm === enums.publicKey.pqc_mldsa_ed25519) {
+    // For PQC, the returned hash algo MUST be set to the specified algorithm, see
+    // https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-pqc#section-5.2.1.
+    return crypto.publicKey.postQuantum.signature.getRequiredHashAlgo(signingKeyPacket.algorithm);
+  }
+
   /**
    * If `preferredSenderAlgo` appears in the prefs of all recipients, we pick it; otherwise, we use the
    * strongest supported algo (`defaultAlgo` is always implicitly supported by all keys).
