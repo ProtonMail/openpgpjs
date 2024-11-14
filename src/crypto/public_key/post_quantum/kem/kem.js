@@ -3,6 +3,7 @@ import * as mlKem from './ml_kem';
 import * as aesKW from '../../../aes_kw';
 import util from '../../../../util';
 import enums from '../../../../enums';
+import hash from '../../../hash';
 
 export async function generate(algo) {
   const { eccPublicKey, eccSecretKey } = await eccKem.generate(algo);
@@ -28,19 +29,21 @@ export async function decrypt(algo, eccCipherText, mlkemCipherText, eccSecretKey
 }
 
 async function multiKeyCombine(algo, ecdhKeyShare, ecdhCipherText, ecdhPublicKey, mlkemKeyShare, mlkemCipherText, mlkemPublicKey) {
-  const { kmac256 } = await import('@noble/hashes/sha3-addons');
-
-  const key = util.concatUint8Array([mlkemKeyShare, ecdhKeyShare]);
+  // LAMPS-aligned and NIST compatible combiner, proposed in: https://mailarchive.ietf.org/arch/msg/openpgp/NMTCy707LICtxIhP3Xt1U5C8MF0/
+  // 2a. KDF(mlkemSS || tradSS || tradCT || tradPK || Domain)
+  //     where Domain is "Domain" for LAMPS, and "mlkemCT || mlkemPK || algId" for OpenPGP
   const encData = util.concatUint8Array([
-    mlkemCipherText,
+    mlkemKeyShare,
+    ecdhKeyShare,
     ecdhCipherText,
-    mlkemPublicKey,
     ecdhPublicKey,
+    // domSep
+    mlkemCipherText,
+    mlkemPublicKey,
     new Uint8Array([algo])
   ]);
-  const domainSeparation = util.encodeUTF8('OpenPGPCompositeKDFv1');
 
-  const kek = kmac256(key, encData, { personalization: domainSeparation }); // output length: 256 bits
+  const kek = await hash.digest(enums.hash.sha3_256, encData);
   return kek;
 }
 
