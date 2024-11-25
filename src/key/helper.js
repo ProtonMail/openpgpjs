@@ -9,7 +9,7 @@ import {
   SignaturePacket
 } from '../packet';
 import enums from '../enums';
-import { getPreferredCurveHashAlgo, getHashByteLength } from '../crypto';
+import { getPreferredCurveHashAlgo, getHashByteLength, publicKey } from '../crypto';
 import util from '../util';
 import defaultConfig from '../config';
 
@@ -164,6 +164,10 @@ export async function getPreferredHashAlgo(targetKeys, signingKeyPacket, date = 
     enums.publicKey.ed448
   ]);
 
+  const pqcAlgos = new Set([
+    enums.publicKey.pqc_mldsa_ed25519
+  ]);
+
   if (eccAlgos.has(signingKeyPacket.algorithm)) {
     // For ECC, the returned hash algo MUST be at least as strong as `preferredCurveHashAlgo`, see:
     // - ECDSA: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.2-5
@@ -185,6 +189,21 @@ export async function getPreferredHashAlgo(targetKeys, signingKeyPacket, date = 
       return getHashByteLength(strongestSupportedAlgo) >= getHashByteLength(preferredCurveAlgo) ?
         strongestSupportedAlgo :
         preferredCurveAlgo;
+    }
+  } else if (pqcAlgos.has(signingKeyPacket.algorithm)) {
+    // For PQC, the returned hash algo MUST be at least 256 bit long, see:
+    // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4 .
+    // Hence, we return the `preferredHashAlgo` as long as it's supported and long enough;
+    // Otherwise, we look at the strongest supported algo, and ultimately fallback the default algo (SHA-256).
+    const preferredSenderAlgoIsSupported = isSupportedHashAlgo(preferredSenderAlgo) && publicKey.postQuantum.signature.isCompatibleHashAlgo(signingKeyPacket.algorithm, preferredSenderAlgo);
+
+    if (preferredSenderAlgoIsSupported) {
+      return preferredSenderAlgo;
+    } else {
+      const strongestSupportedAlgo = getStrongestSupportedHashAlgo();
+      return publicKey.postQuantum.signature.isCompatibleHashAlgo(signingKeyPacket.algorithm, strongestSupportedAlgo) ?
+        strongestSupportedAlgo :
+        defaultAlgo;
     }
   }
 
@@ -403,6 +422,13 @@ export function sanitizeKeyOptions(options, subkeyDefaults = {}) {
   }
 
   switch (options.type) {
+    case 'pqc':
+      if (options.sign) {
+        options.algorithm = enums.publicKey.pqc_mldsa_ed25519;
+      } else {
+        options.algorithm = enums.publicKey.pqc_mlkem_x25519;
+      }
+      break;
     case 'ecc': // NB: this case also handles legacy eddsa and x25519 keys, based on `options.curve`
       try {
         options.curve = enums.write(enums.curve, options.curve);
@@ -461,6 +487,7 @@ export function validateSigningKeyPacket(keyPacket, signature, config) {
     case enums.publicKey.ed25519:
     case enums.publicKey.ed448:
     case enums.publicKey.hmac:
+    case enums.publicKey.pqc_mldsa_ed25519:
       if (!signature.keyFlags && !config.allowMissingKeyFlags) {
         throw new Error('None of the key flags is set: consider passing `config.allowMissingKeyFlags`');
       }
@@ -480,6 +507,7 @@ export function validateEncryptionKeyPacket(keyPacket, signature, config) {
     case enums.publicKey.x25519:
     case enums.publicKey.x448:
     case enums.publicKey.aead:
+    case enums.publicKey.pqc_mlkem_x25519:
       if (!signature.keyFlags && !config.allowMissingKeyFlags) {
         throw new Error('None of the key flags is set: consider passing `config.allowMissingKeyFlags`');
       }
@@ -502,7 +530,8 @@ export function validateDecryptionKeyPacket(keyPacket, signature, config) {
     case enums.publicKey.elgamal:
     case enums.publicKey.ecdh:
     case enums.publicKey.x25519:
-    case enums.publicKey.x448: {
+    case enums.publicKey.x448:
+    case enums.publicKey.pqc_mlkem_x25519: {
       const isValidSigningKeyPacket = !signature.keyFlags || (signature.keyFlags[0] & enums.keyFlags.signData) !== 0;
       if (isValidSigningKeyPacket && config.allowInsecureDecryptionWithSigningKeys) {
         // This is only relevant for RSA keys, all other signing algorithms cannot decrypt

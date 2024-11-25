@@ -22,7 +22,6 @@
 
 import util from '../../../util';
 import enums from '../../../enums';
-import { getHashByteLength } from '../../hash';
 import { getRandomBytes } from '../../random';
 import { b64ToUint8Array, uint8ArrayToB64 } from '../../../encoding/base64';
 
@@ -89,12 +88,6 @@ export async function generate(algo) {
  * @async
  */
 export async function sign(algo, hashAlgo, message, publicKey, privateKey, hashed) {
-  if (getHashByteLength(hashAlgo) < getHashByteLength(getPreferredHashAlgo(algo))) {
-    // Enforce digest sizes:
-    // - Ed25519: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.4-4
-    // - Ed448: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.5-4
-    throw new Error('Hash algorithm too weak for EdDSA.');
-  }
   switch (algo) {
     case enums.publicKey.ed25519:
       try {
@@ -140,12 +133,6 @@ export async function sign(algo, hashAlgo, message, publicKey, privateKey, hashe
  * @async
  */
 export async function verify(algo, hashAlgo, { RS }, m, publicKey, hashed) {
-  if (getHashByteLength(hashAlgo) < getHashByteLength(getPreferredHashAlgo(algo))) {
-    // Enforce digest sizes:
-    // - Ed25519: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.4-4
-    // - Ed448: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.5-4
-    throw new Error('Hash algorithm too weak for EdDSA.');
-  }
   switch (algo) {
     case enums.publicKey.ed25519:
       try {

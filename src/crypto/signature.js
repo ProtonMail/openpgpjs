@@ -3,11 +3,12 @@
  * @module crypto/signature
  */
 
-import { elliptic, rsa, dsa, hmac } from './public_key';
+import { elliptic, rsa, dsa, hmac, postQuantum } from './public_key';
 import enums from '../enums';
 import util from '../util';
 import ShortByteString from '../type/short_byte_string';
 import { UnsupportedError } from '../packet/packet';
+import { getHashByteLength } from './hash';
 
 /**
  * Parse signature in binary form to get the parameters.
@@ -70,6 +71,12 @@ export function parseSignatureParams(algo, signature) {
       const mac = new ShortByteString(); read += mac.read(signature.subarray(read));
       return { read, signatureParams: { mac } };
     }
+    case enums.publicKey.pqc_mldsa_ed25519: {
+      const eccSignatureSize = 2 * elliptic.eddsa.getPayloadSize(enums.publicKey.ed25519);
+      const eccSignature = util.readExactSubarray(signature, read, read + eccSignatureSize); read += eccSignature.length;
+      const mldsaSignature = util.readExactSubarray(signature, read, read + 3309); read += mldsaSignature.length;
+      return { read, signatureParams: { eccSignature, mldsaSignature } };
+    }
     default:
       throw new UnsupportedError('Unknown signature algorithm.');
   }
@@ -113,6 +120,12 @@ export async function verify(algo, hashAlgo, signature, publicParams, privatePar
       return elliptic.ecdsa.verify(oid, hashAlgo, { r, s }, data, Q, hashed);
     }
     case enums.publicKey.eddsaLegacy: {
+      if (getHashByteLength(hashAlgo) < getHashByteLength(enums.hash.sha256)) {
+        // Enforce digest sizes, since the constraint was already present in RFC4880bis:
+        // see https://tools.ietf.org/id/draft-ietf-openpgp-rfc4880bis-10.html#section-15-7.2
+        // and https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.3-3
+        throw new Error('Hash algorithm too weak for EdDSALegacy.');
+      }
       const { oid, Q } = publicParams;
       const curveSize = new elliptic.CurveWithOID(oid).payloadSize;
       // When dealing little-endian MPI data, we always need to left-pad it, as done with big-endian values:
@@ -123,6 +136,13 @@ export async function verify(algo, hashAlgo, signature, publicParams, privatePar
     }
     case enums.publicKey.ed25519:
     case enums.publicKey.ed448: {
+      if (getHashByteLength(hashAlgo) < getHashByteLength(elliptic.eddsa.getPreferredHashAlgo(algo))) {
+        // Enforce digest sizes:
+        // - Ed25519: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.4-4
+        // - Ed448: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.5-4
+        throw new Error('Hash algorithm too weak for EdDSA.');
+      }
+
       const { A } = publicParams;
       return elliptic.eddsa.verify(algo, hashAlgo, signature, data, A, hashed);
     }
@@ -133,6 +153,15 @@ export async function verify(algo, hashAlgo, signature, publicParams, privatePar
       const { cipher: algo } = publicParams;
       const { keyMaterial } = privateParams;
       return hmac.verify(algo.getValue(), keyMaterial, signature.mac.data, hashed);
+    }
+    case enums.publicKey.pqc_mldsa_ed25519: {
+      if (!postQuantum.signature.isCompatibleHashAlgo(algo, hashAlgo)) {
+        // The signature hash algo MUST have digest larger than 256 bits
+        // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4
+        throw new Error('Unexpected hash algorithm for PQC signature: digest size too short');
+      }
+      const { eccPublicKey, mldsaPublicKey } = publicParams;
+      return postQuantum.signature.verify(algo, hashAlgo, eccPublicKey, mldsaPublicKey, hashed, signature);
     }
     default:
       throw new Error('Unknown signature algorithm.');
@@ -179,12 +208,24 @@ export async function sign(algo, hashAlgo, publicKeyParams, privateKeyParams, da
       return elliptic.ecdsa.sign(oid, hashAlgo, data, Q, d, hashed);
     }
     case enums.publicKey.eddsaLegacy: {
+      if (getHashByteLength(hashAlgo) < getHashByteLength(enums.hash.sha256)) {
+        // Enforce digest sizes, since the constraint was already present in RFC4880bis:
+        // see https://tools.ietf.org/id/draft-ietf-openpgp-rfc4880bis-10.html#section-15-7.2
+        // and https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.3-3
+        throw new Error('Hash algorithm too weak for EdDSALegacy.');
+      }
       const { oid, Q } = publicKeyParams;
       const { seed } = privateKeyParams;
       return elliptic.eddsaLegacy.sign(oid, hashAlgo, data, Q, seed, hashed);
     }
     case enums.publicKey.ed25519:
     case enums.publicKey.ed448: {
+      if (getHashByteLength(hashAlgo) < getHashByteLength(elliptic.eddsa.getPreferredHashAlgo(algo))) {
+        // Enforce digest sizes:
+        // - Ed25519: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.4-4
+        // - Ed448: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.5-4
+        throw new Error('Hash algorithm too weak for EdDSA.');
+      }
       const { A } = publicKeyParams;
       const { seed } = privateKeyParams;
       return elliptic.eddsa.sign(algo, hashAlgo, data, A, seed, hashed);
@@ -194,6 +235,16 @@ export async function sign(algo, hashAlgo, publicKeyParams, privateKeyParams, da
       const { keyMaterial } = privateKeyParams;
       const mac = await hmac.sign(algo.getValue(), keyMaterial, hashed);
       return { mac: new ShortByteString(mac) };
+    }
+    case enums.publicKey.pqc_mldsa_ed25519: {
+      if (!postQuantum.signature.isCompatibleHashAlgo(algo, hashAlgo)) {
+        // The signature hash algo MUST have digest larger than 256 bits
+        // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4
+        throw new Error('Unexpected hash algorithm for PQC signature: digest size too short');
+      }
+      const { eccPublicKey } = publicKeyParams;
+      const { eccSecretKey, mldsaSecretKey } = privateKeyParams;
+      return postQuantum.signature.sign(algo, hashAlgo, eccSecretKey, eccPublicKey, mldsaSecretKey, hashed);
     }
     default:
       throw new Error('Unknown signature algorithm.');
