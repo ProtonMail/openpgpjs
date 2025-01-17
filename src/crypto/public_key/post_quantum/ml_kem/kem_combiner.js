@@ -1,5 +1,5 @@
 import * as eccKem from './ecc_kem';
-import * as mlKem from './ml_kem';
+import * as mlKem from './ml_kem_pure';
 import * as aesKW from '../../../aes_kw';
 import util from '../../../../util';
 import enums from '../../../../enums';
