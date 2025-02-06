@@ -1,5 +1,5 @@
 import enums from '../../../../enums';
-import * as mldsa from './ml_dsa';
+import * as mldsa from './ml_dsa_pure';
 import * as eccdsa from './ecc_dsa';
 
 export async function generate(algo) {

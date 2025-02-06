@@ -76,6 +76,10 @@ export function parseSignatureParams(algo, signature) {
       const mldsaSignature = util.readExactSubarray(signature, read, read + 3309); read += mldsaSignature.length;
       return { read, signatureParams: { eccSignature, mldsaSignature } };
     }
+    case enums.publicKey.pqc_slhdsa_shake128s: {
+      const slhdsaSignature = util.readExactSubarray(signature, read, read + 7856); read += slhdsaSignature.length;
+      return { read, signatureParams: { slhdsaSignature } };
+    }
     default:
       throw new UnsupportedError('Unknown signature algorithm.');
   }
@@ -142,7 +146,11 @@ export async function verify(algo, hashAlgo, signature, publicParams, privatePar
     }
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { eccPublicKey, mldsaPublicKey } = publicParams;
-      return postQuantum.signature.verify(algo, hashAlgo, eccPublicKey, mldsaPublicKey, hashed, signature);
+      return postQuantum.mldsa.verify(algo, hashAlgo, eccPublicKey, mldsaPublicKey, hashed, signature);
+    }
+    case enums.publicKey.pqc_slhdsa_shake128s: {
+      const { slhdsaPublicKey } = publicParams;
+      return postQuantum.slhdsa.verify(algo, hashAlgo, slhdsaPublicKey, hashed, signature);
     }
     default:
       throw new Error('Unknown signature algorithm.');
@@ -208,7 +216,11 @@ export async function sign(algo, hashAlgo, publicKeyParams, privateKeyParams, da
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { eccPublicKey } = publicKeyParams;
       const { eccSecretKey, mldsaSecretKey } = privateKeyParams;
-      return postQuantum.signature.sign(algo, hashAlgo, eccSecretKey, eccPublicKey, mldsaSecretKey, hashed);
+      return postQuantum.mldsa.sign(algo, hashAlgo, eccSecretKey, eccPublicKey, mldsaSecretKey, hashed);
+    }
+    case enums.publicKey.pqc_slhdsa_shake128s: {
+      const { slhdsaSecretKey } = privateKeyParams;
+      return postQuantum.slhdsa.sign(algo, hashAlgo, slhdsaSecretKey, hashed);
     }
     default:
       throw new Error('Unknown signature algorithm.');

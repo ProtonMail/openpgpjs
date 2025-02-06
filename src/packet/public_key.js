@@ -17,7 +17,7 @@
 
 import KeyID from '../type/keyid';
 import defaultConfig from '../config';
-import { computeDigest, parsePublicKeyParams, serializeParams } from '../crypto';
+import { computeDigest, isPostQuantumAlgo, parsePublicKeyParams, serializeParams } from '../crypto';
 import enums from '../enums';
 import util from '../util';
 import { UnsupportedError } from './packet';
@@ -140,11 +140,8 @@ class PublicKeyPacket {
       }
       // The composite ML-DSA + EdDSA schemes MUST be used only with v6 keys.
       // The composite ML-KEM + ECDH schemes MUST be used only with v6 keys.
-      if (this.version !== 6 && (
-        this.algorithm === enums.publicKey.pqc_mldsa_ed25519 ||
-        this.algorithm === enums.publicKey.pqc_mlkem_x25519
-      )) {
-        throw new Error('Unexpected key version: ML-DSA and ML-KEM algorithms can only be used with v6 keys');
+      if (this.version !== 6 && isPostQuantumAlgo(this.algorithm)) {
+        throw new Error('Unexpected key version: post-quantum algorithms can only be used with v6 keys');
       }
       this.publicParams = publicParams;
       pos += read;

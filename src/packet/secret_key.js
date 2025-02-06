@@ -17,7 +17,7 @@
 
 import PublicKeyPacket from './public_key';
 import { newS2KFromConfig, newS2KFromType } from '../type/s2k';
-import { computeDigest, getCipherParams, parsePrivateKeyParams, serializeParams, generateParams, validateParams, getRandomBytes, cipherMode } from '../crypto';
+import { computeDigest, getCipherParams, parsePrivateKeyParams, serializeParams, generateParams, validateParams, getRandomBytes, cipherMode, isPostQuantumAlgo } from '../crypto';
 import enums from '../enums';
 import util from '../util';
 import defaultConfig from '../config';
@@ -532,10 +532,7 @@ class SecretKeyPacket extends PublicKeyPacket {
     )) {
       throw new Error(`Cannot generate v6 keys of type 'ecc' with curve ${curve}. Generate a key of type 'curve25519' instead`);
     }
-    if (this.version !== 6 && (
-      this.algorithm === enums.publicKey.pqc_mldsa_ed25519 ||
-      this.algorithm === enums.publicKey.pqc_mlkem_x25519
-    )) {
+    if (this.version !== 6 && isPostQuantumAlgo(this.algorithm)) {
       throw new Error(`Cannot generate v${this.version} keys of type 'pqc'. Generate a v6 key instead`);
     }
     const { privateParams, publicParams } = await generateParams(this.algorithm, bits, curve, symmetric);
