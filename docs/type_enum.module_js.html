@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: KeyID</title>
+    <title>JSDoc: Module: js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: KeyID</h1>
+    <h1 class="page-title">Module: js</h1>
 
     
 
@@ -28,46 +28,16 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-type_keyid.html">type/keyid</a>~</span>KeyID<span class="signature">()</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description"><p>Implementation of type key id</p>
-<p><a href="https://tools.ietf.org/html/rfc4880#section-3.3">RFC4880 3.3</a>:
-A Key ID is an eight-octet scalar that identifies a key.
-Implementations SHOULD NOT assume that Key IDs are unique.  The
-section &quot;Enhanced Key Formats&quot; below describes how Key IDs are
-formed.</p></div>
-        
-    
 </header>
 
 <article>
     <div class="container-overview">
     
         
+            <div class="description"><p>Wrapper for enums</p></div>
+        
 
-    
-    <h2>Constructor</h2>
-    
-
-    
-    <h4 class="name" id="KeyID"><span class="type-signature"></span>new KeyID<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 
 
 <dl class="details">
@@ -101,7 +71,7 @@ formed.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js">type/keyid.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js#L33">line 33</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js#L19">line 19</a>
     </li></ul></dd>
     
 
@@ -113,29 +83,18 @@ formed.</p></div>
 </dl>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
     
     </div>
 
     
 
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li><a href="module-enums.html">module:enums</a></li>
+        </ul>
     
 
     
@@ -157,7 +116,7 @@ formed.</p></div>
     
 
     
-    <h4 class="name" id="equals"><span class="type-signature"></span>equals<span class="signature">(keyID, matchWildcard)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getName"><span class="type-signature"></span>getName<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
     
@@ -165,181 +124,7 @@ formed.</p></div>
 
 
 <div class="description">
-    <p>Checks equality of Key ID's</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>keyID</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">KeyID</span>
-
-
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>matchWildcard</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last"><p>Indicates whether to check if either keyID is a wildcard</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js">type/keyid.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js#L68">line 68</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="isNull"><span class="type-signature"></span>isNull<span class="signature">()</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Checks to see if the Key ID is unset</p>
+    <p>Get the name of the enum entry</p>
 </div>
 
 
@@ -385,7 +170,7 @@ formed.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js">type/keyid.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js#L76">line 76</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js#L60">line 60</a>
     </li></ul></dd>
     
 
@@ -414,7 +199,7 @@ formed.</p></div>
 
         
 <div class="param-desc">
-    <p>True if the Key ID is null.</p>
+    <p>The name string</p>
 </div>
 
 
@@ -425,7 +210,7 @@ formed.</p></div>
     </dt>
     <dd>
         
-<span class="param-type">Boolean</span>
+<span class="param-type">string</span>
 
 
     </dd>
@@ -443,7 +228,7 @@ formed.</p></div>
     
 
     
-    <h4 class="name" id="isWildcard"><span class="type-signature"></span>isWildcard<span class="signature">()</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    <h4 class="name" id="getValue"><span class="type-signature"></span>getValue<span class="signature">()</span><span class="type-signature"> &rarr; {Number}</span></h4>
     
 
     
@@ -451,7 +236,7 @@ formed.</p></div>
 
 
 <div class="description">
-    <p>Checks to see if the Key ID is a &quot;wildcard&quot; Key ID (all zeros)</p>
+    <p>Get the integer value of the enum entry</p>
 </div>
 
 
@@ -497,7 +282,7 @@ formed.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js">type/keyid.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js#L84">line 84</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js#L68">line 68</a>
     </li></ul></dd>
     
 
@@ -526,7 +311,7 @@ formed.</p></div>
 
         
 <div class="param-desc">
-    <p>True if this is a wildcard Key ID.</p>
+    <p>The integer value</p>
 </div>
 
 
@@ -537,7 +322,7 @@ formed.</p></div>
     </dt>
     <dd>
         
-<span class="param-type">Boolean</span>
+<span class="param-type">Number</span>
 
 
     </dd>
@@ -555,7 +340,7 @@ formed.</p></div>
     
 
     
-    <h4 class="name" id="read"><span class="type-signature"></span>read<span class="signature">(bytes)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="read"><span class="type-signature"></span>read<span class="signature">(input)</span><span class="type-signature"></span></h4>
     
 
     
@@ -563,7 +348,7 @@ formed.</p></div>
 
 
 <div class="description">
-    <p>Parsing method for a key id</p>
+    <p>Read an enum entry</p>
 </div>
 
 
@@ -599,7 +384,7 @@ formed.</p></div>
 
         <tr>
             
-                <td class="name"><code>bytes</code></td>
+                <td class="name"><code>input</code></td>
             
 
             <td class="type">
@@ -615,7 +400,7 @@ formed.</p></div>
 
             
 
-            <td class="description last"><p>Input to read the key id from</p></td>
+            <td class="description last"><p>Where to read the symmetric algo from</p></td>
         </tr>
 
     
@@ -658,7 +443,7 @@ formed.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js">type/keyid.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js#L42">line 42</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js#L42">line 42</a>
     </li></ul></dd>
     
 
@@ -683,118 +468,6 @@ formed.</p></div>
 
 
 
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="toHex"><span class="type-signature"></span>toHex<span class="signature">()</span><span class="type-signature"> &rarr; {String}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Returns the Key ID represented as a hexadecimal string</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js">type/keyid.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js#L59">line 59</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Key ID as a hexadecimal string.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">String</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -814,7 +487,7 @@ formed.</p></div>
 
 
 <div class="description">
-    <p>Serializes the Key ID</p>
+    <p>Write an enum as an integer</p>
 </div>
 
 
@@ -860,7 +533,7 @@ formed.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js">type/keyid.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/keyid.js#L51">line 51</a>
+        <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js">type/enum.js</a>, <a href="https://github.com/ProtonMail/openpgpjs/blob/v6.1.1-patch.0/src/type/enum.js#L52">line 52</a>
     </li></ul></dd>
     
 
@@ -889,7 +562,7 @@ formed.</p></div>
 
         
 <div class="param-desc">
-    <p>Key ID as a Uint8Array.</p>
+    <p>An integer representing the algorithm</p>
 </div>
 
 
