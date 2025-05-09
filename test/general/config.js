@@ -21,6 +21,19 @@ export default () => describe('Custom configuration', function() {
     await expect(
       openpgp.readMessage({ armoredMessage: parsedMessage.armor(), config })
     ).to.be.rejectedWith(/Version 1 of the SKESK packet is unsupported/);
+
+    const grammarCheckPackets = new openpgp.PacketList();
+    grammarCheckPackets.push(new openpgp.LiteralDataPacket());
+    grammarCheckPackets.push(new openpgp.LiteralDataPacket());
+    await expect(openpgp.readMessage({
+      binaryMessage: grammarCheckPackets.write(),
+      config: { enforceGrammar: true }
+    })).to.be.rejectedWith(/Data does not respect OpenPGP grammar/);
+    const parsedMessage2 = await openpgp.readMessage({
+      binaryMessage: grammarCheckPackets.write(),
+      config: { enforceGrammar: false }
+    });
+    expect(parsedMessage2.packets[0]).to.be.instanceOf(openpgp.LiteralDataPacket);
   });
 
   it('openpgp.readSignature', async function() {

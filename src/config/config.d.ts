@@ -37,6 +37,8 @@ export interface Config {
   passwordCollisionCheck: boolean;
   ignoreUnsupportedPackets: boolean;
   ignoreMalformedPackets: boolean;
+  enforceGrammar: boolean;
+  pluggableGrammarErrorReporter: ((errorMessage: string) => any) | null;
   additionalAllowedPackets: Array<{ new(): any }>;
   versionString: string;
   commentString: string;

@@ -315,6 +315,21 @@ const util = {
   },
 
   /**
+   * Same as Array.findLastIndex, which is not supported on Safari 14 .
+   * @param {Array} arr
+   * @param {function(element, index, arr): boolean} findFn
+   * @return index of last element matching `findFn`, -1 if not found
+   */
+  findLastIndex: function(arr, findFn) {
+    for (let i = arr.length; i >= 0; i--) {
+      if (findFn(arr[i], i, arr)) {
+        return i;
+      }
+    }
+    return -1;
+  },
+
+  /**
    * Calculates a 16bit sum of a Uint8Array by adding each character
    * codes modulus 65535
    * @param {Uint8Array} Uint8Array - To create a sum of
@@ -629,6 +644,21 @@ const util = {
       }));
       reject(exception);
     });
+  },
+
+
+  /**
+   * Check whether a promise is still in pending state.
+   * Adapted from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race#using_promise.race_to_detect_the_status_of_a_promise
+   * @param {Promise} promise
+   */
+  isPromisePending: promise => {
+    const pendingState = { status: 'pending' };
+
+    return Promise.race([promise, pendingState]).then(
+      value => (value === pendingState ? value : { status: 'fulfilled' }),
+      () => ({ status: 'rejected' })
+    ).then(({ status }) => status === 'pending');
   },
 
   /**
