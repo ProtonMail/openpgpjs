@@ -72,7 +72,7 @@ const isValidOpenPGPMessage = (
   // Take care of packet tags that can appear anywhere in the sequence:
   // 1. A Marker packet (Section 5.8) can appear anywhere in the sequence.
   // 2. An implementation MUST be able to process Padding packets anywhere else in an OpenPGP stream so that future revisions of this document may specify further locations for padding.
-  // 3. An unknown non-critical packet MUST be ignored (criticality its enforced on parsing).
+  // 3. An unknown non-critical packet MUST be ignored (criticality is enforced on parsing).
   const normalizedList: enums.packet[] = notNormalizedList.filter(tag => (
     tag !== enums.packet.marker &&
     tag !== enums.packet.padding &&
@@ -85,109 +85,39 @@ const isValidOpenPGPMessage = (
     isValidSignedMessage(normalizedList, acceptPartial);
 };
 
-
 /**
- * Grammar validation cannot be run before message integrity has been enstablished,
- * to avoid leaking info about the unauthenticated message structure.
- * This validator allows checking the grammar validity in an async manner, by storing the validity
- * status during parsing but only reporting it after authentication has been completed.
- * `markAuthenticated` needs to be invoked to notify the validator of successful authentication.
+ * If `delayReporting === false`, the grammar validator throws as soon as an invalid packet sequence is detected during parsing.
+ * This setting MUST NOT be used when parsing unauthenticated decrypted data, to avoid instantiating decryption oracles.
+ *  Passing `delayReporting === true` allows checking the grammar validity in an async manner, by
+ * only reporting the validity status after parsing is done (i.e. and authentication is expected to
+ * have been enstablished)
  */
-export const getAsyncMessageGrammarValidator = () => {
-  const getPromiseWithResolvers = <T>() => {
-    let resolve: (value?: any) => void;
-    let reject: (reason?: any) => void;
-    const promise = new Promise<T>((res, rej) => {
-      resolve = res;
-      reject = rej;
-    });
-    promise.catch(() => {}); // avoid uncaught promise errors
-    // @ts-ignore false positive for used-before-assigned
-    return { promise, reject, resolve };
-  };
-
-  const grammarCheckPromiseWithResolvers = getPromiseWithResolvers<true>();
-  let authenticated = false;
+export const getMessageGrammarValidator = ({ delayReporting }: { delayReporting: boolean }) => {
   let logged = false;
 
-  return {
-    /**
-     * Notify the validator that authentication for the data being validated has been confirmed.
-     *
-     * If the validation result is already available, it is also returned.
-     * The result will not be available if the the data has only been partially parsed, and
-     * no grammar errors have been encountered in the partial data.
-     * In such a case, the result will be later returned by subsequent calls to
-     * `messageGrammarValidatorWithLatentReporting`.
-     * @returns `Promise<true>` on successful grammar validation, a rejected promise if unsuccesssful,
-     *    or `Promise<undefined>` if still pending.
-     */
-    markAuthenticated: async () => {
-      authenticated = true;
-      if (await util.isPromisePending(grammarCheckPromiseWithResolvers.promise) === false) {
-        return grammarCheckPromiseWithResolvers.promise;
+
+  /**
+  * @returns `true` on successful grammar validation; if `delayReporting` is set, `null` is returned
+  *   if validation is still pending (partial parsing, waiting for authentication to be confirmed).
+  * @throws on grammar error, provided `config.enforceGrammar` is enabled.
+  */
+  return (list: number[], isPartial: boolean, config: Config): true | null => {
+    if (delayReporting && isPartial) return null; // delay until the full message has been parsed (i.e. authenticated)
+
+    if (!isValidOpenPGPMessage(list, isPartial)) {
+      const error = new GrammarError(`Data does not respect OpenPGP grammar [${list}]`);
+      if (!logged) {
+        config.pluggableGrammarErrorReporter?.(error.message);
+        util.printDebugError(error);
+        logged = true;
       }
-    },
-    /**
-     * Run grammar check over `list`.
-     * The result (when available) is stored in an internal promise that is only returned after `markAuthenticated`
-     * has been called.
-     * @returns `Promise<true>` on successful grammar validation, a rejected promise if unsuccesssful,
-     *    or `Promise<undefined>` if still pending (either because of partial parsing or waiting for authentication
-     * to be confirmed.
-     */
-    messageGrammarValidatorWithLatentReporting: async (list: number[], isPartial: boolean, config: Config) => {
-      const isValid = isValidOpenPGPMessage(list, isPartial);
-      if (isValid) {
-        if (!isPartial) {
-          grammarCheckPromiseWithResolvers.resolve(true); // noop if already rejected
-        }
+      if (config.enforceGrammar) {
+        throw error;
       } else {
-        const error = new GrammarError(`Data does not respect OpenPGP grammar [${list}]`);
-        if (!logged) {
-          config.pluggableGrammarErrorReporter?.(error.message);
-          util.printDebugError(error);
-          logged = true;
-        }
-        if (config.enforceGrammar) {
-          grammarCheckPromiseWithResolvers.reject(error); // reject as early as possible
-        } else {
-          // eslint-disable-next-line no-lonely-if
-          if (!isPartial) {
-            grammarCheckPromiseWithResolvers.resolve(true); // noop if already rejected
-          }
-        }
-      }
-
-      if (authenticated && await util.isPromisePending(grammarCheckPromiseWithResolvers.promise) === false) {
-        return grammarCheckPromiseWithResolvers.promise;
+        return true;
       }
     }
+
+    return true;
   };
 };
-
-/**
- * This grammar validator throws as soon as an invalid packet sequence is detected during parsing.
- * It MUST NOT be used when parsing unauthenticated decrypted data, to avoid instantiating decryption oracles:
- * use `getAsyncMessageGrammarValidator()` instead
- */
-export const getSyncMessageGrammarValidator = () => {
-  let logged = false;
-
-  return (list: number[], acceptPartial: boolean, config: Config) => {
-    if (isValidOpenPGPMessage(list, acceptPartial)) {
-      return;
-    }
-
-    const error = new GrammarError(`Data does not respect OpenPGP grammar [${list}]`);
-    if (config.enforceGrammar) {
-      config.pluggableGrammarErrorReporter?.(error.message);
-      throw error;
-    } else if (!logged) {
-      config.pluggableGrammarErrorReporter?.(error.message);
-      util.printDebugError(error);
-      logged = true;
-    }
-  };
-};
-

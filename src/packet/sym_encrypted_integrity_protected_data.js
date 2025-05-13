@@ -28,7 +28,7 @@ import OnePassSignaturePacket from './one_pass_signature';
 import SignaturePacket from './signature';
 import PacketList from './packetlist';
 import { UnsupportedError } from './packet';
-import { getAsyncMessageGrammarValidator, getSyncMessageGrammarValidator } from './grammar';
+import { getMessageGrammarValidator } from './grammar';
 
 // A SEIP packet can contain the following packet types
 const allowedPackets = /*#__PURE__*/ util.constructAllowedPackets([
@@ -191,7 +191,7 @@ class SymEncryptedIntegrityProtectedDataPacket {
         throw new Error('Unexpected session key algorithm');
       }
       packetbytes = await runAEAD(this, 'decrypt', key, encrypted);
-      grammarValidator = getSyncMessageGrammarValidator();
+      grammarValidator = getMessageGrammarValidator({ delayReporting: false });
     } else {
       const { blockSize } = getCipherParams(sessionKeyAlgorithm);
       const decrypted = await cipherMode.cfb.decrypt(sessionKeyAlgorithm, key, encrypted, new Uint8Array(blockSize));
@@ -199,12 +199,7 @@ class SymEncryptedIntegrityProtectedDataPacket {
       // Grammar validation cannot be run before message integrity has been enstablished,
       // to avoid leaking info about the unauthenticated message structure.
       const releaseUnauthenticatedStream = util.isStream(encrypted) && config.allowUnauthenticatedStream;
-      const asyncMessageGrammarValidator = releaseUnauthenticatedStream ?
-        getAsyncMessageGrammarValidator() :
-        null;
-      grammarValidator = asyncMessageGrammarValidator ?
-        asyncMessageGrammarValidator.messageGrammarValidatorWithLatentReporting :
-        getSyncMessageGrammarValidator();
+      grammarValidator = getMessageGrammarValidator({ delayReporting: releaseUnauthenticatedStream });
 
       // there must be a modification detection code packet as the
       // last packet and everything gets hashed except the hash itself
@@ -213,11 +208,12 @@ class SymEncryptedIntegrityProtectedDataPacket {
       const verifyHash = Promise.all([
         streamReadToEnd(await computeDigest(enums.hash.sha1, streamPassiveClone(tohash))),
         streamReadToEnd(realHash)
-      ]).then(async ([hash, mdc]) => {
+      ]).then(([hash, mdc]) => {
         if (!util.equalsUint8Array(hash, mdc)) {
           throw new Error('Modification detected.');
         }
-        await asyncMessageGrammarValidator?.markAuthenticated();
+        // this last chunk comes at the end of the stream passed to Packetlist.read's streamTransformPair,
+        // which can thus be 'done' only after the MDC has been checked.
         return new Uint8Array();
       });
       const bytes = streamSlice(tohash, blockSize + 2); // Remove random prefix

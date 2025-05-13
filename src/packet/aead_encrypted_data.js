@@ -28,7 +28,7 @@ import CompressedDataPacket from './compressed_data';
 import OnePassSignaturePacket from './one_pass_signature';
 import SignaturePacket from './signature';
 import PacketList from './packetlist';
-import { getSyncMessageGrammarValidator } from './grammar';
+import { getMessageGrammarValidator } from './grammar';
 
 // An AEAD-encrypted Data packet can contain the following packet types
 const allowedPackets = /*#__PURE__*/ util.constructAllowedPackets([
@@ -106,7 +106,7 @@ class AEADEncryptedDataPacket {
       await runAEAD(this, 'decrypt', key, streamClone(this.encrypted)),
       allowedPackets,
       config,
-      getSyncMessageGrammarValidator()
+      getMessageGrammarValidator({ enforceDelay: false })
     );
   }
 

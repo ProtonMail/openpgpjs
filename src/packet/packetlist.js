@@ -95,7 +95,7 @@ class PacketList extends Array {
               // since they can enable an decryption oracle.
               // It's responsibility of the caller to pass a `grammarValidator` that takes care of
               // postponing error reporting until the data has been authenticated.
-              await grammarValidator?.(writtenTags, true, config);
+              grammarValidator?.(writtenTags, true, config);
             } catch (e) {
               // If an implementation encounters a critical packet where the packet type is unknown in a packet sequence,
               // it MUST reject the whole packet sequence. On the other hand, an unknown non-critical packet MUST be ignored.
@@ -124,7 +124,9 @@ class PacketList extends Array {
             }
           });
           if (done) {
-            await grammarValidator?.(writtenTags, false, config);
+            // Here we are past the MDC check for SEIPDv1 data, hence
+            // the data is always authenticated at this point.
+            grammarValidator?.(writtenTags, false, config);
             await writer.ready;
             await writer.close();
             return;

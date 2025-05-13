@@ -646,21 +646,6 @@ const util = {
     });
   },
 
-
-  /**
-   * Check whether a promise is still in pending state.
-   * Adapted from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race#using_promise.race_to_detect_the_status_of_a_promise
-   * @param {Promise} promise
-   */
-  isPromisePending: promise => {
-    const pendingState = { status: 'pending' };
-
-    return Promise.race([promise, pendingState]).then(
-      value => (value === pendingState ? value : { status: 'fulfilled' }),
-      () => ({ status: 'rejected' })
-    ).then(({ status }) => status === 'pending');
-  },
-
   /**
    * Return either `a` or `b` based on `cond`, in algorithmic constant time.
    * @param {Boolean} cond

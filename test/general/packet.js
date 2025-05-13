@@ -13,7 +13,7 @@ import * as random from '../../src/crypto/random';
 
 import * as input from './testInputs.js';
 import { mockCryptoRandomGenerator, restoreCryptoRandomGenerator } from '../mockRandom.ts';
-import { getAsyncMessageGrammarValidator, getSyncMessageGrammarValidator } from '../../src/packet/grammar.js';
+import { getMessageGrammarValidator } from '../../src/packet/grammar.js';
 
 function stringify(array) {
   if (stream.isStream(array)) {
@@ -1492,19 +1492,7 @@ kePFjAnu9cpynKXu3usf8+FuBw2zLsg1Id1n7ttxoAte416KjBN9lFBt8mcu
         const packets = new openpgp.PacketList();
         packets.push(new openpgp.LiteralDataPacket());
         packets.push(new openpgp.LiteralDataPacket());
-        await expect(openpgp.PacketList.fromBinary(packets.write(), allAllowedPackets, openpgp.config, getSyncMessageGrammarValidator())).to.be.rejectedWith(/Data does not respect OpenPGP grammar/);
-
-        const {
-          markAuthenticated,
-          messageGrammarValidatorWithLatentReporting
-        } = getAsyncMessageGrammarValidator();
-        const parsed = await openpgp.PacketList.fromBinary(packets.write(), allAllowedPackets, openpgp.config, messageGrammarValidatorWithLatentReporting);
-        expect(parsed[0]).to.be.instanceOf(openpgp.LiteralDataPacket);
-        // test latent resolution until `markAuthenticated` is called
-        const sampleGrammarValidatorReturnValue = () => messageGrammarValidatorWithLatentReporting([] /* valid */, true, openpgp.config);
-        expect(await sampleGrammarValidatorReturnValue()).to.be.undefined;
-        await expect(markAuthenticated()).to.be.rejectedWith(/Data does not respect OpenPGP grammar/);
-        await expect(sampleGrammarValidatorReturnValue()).to.be.rejectedWith(/Data does not respect OpenPGP grammar/);
+        await expect(openpgp.PacketList.fromBinary(packets.write(), allAllowedPackets, openpgp.config, getMessageGrammarValidator({ delayReporting: false }))).to.be.rejectedWith(/Data does not respect OpenPGP grammar/);
       });
 
       it('accepts padding and marker packets', async () => {
@@ -1514,56 +1502,33 @@ kePFjAnu9cpynKXu3usf8+FuBw2zLsg1Id1n7ttxoAte416KjBN9lFBt8mcu
         packets.push(padding);
         packets.push(new openpgp.MarkerPacket());
         packets.push(new openpgp.LiteralDataPacket());
-        const parsed = await openpgp.PacketList.fromBinary(packets.write(), allAllowedPackets, openpgp.config, getSyncMessageGrammarValidator());
+        const parsed = await openpgp.PacketList.fromBinary(packets.write(), allAllowedPackets, openpgp.config, getMessageGrammarValidator({ delayReporting: false }));
         expect(parsed.length).to.equal(1); // marker and padding packets are always dropped on parsing
 
-        const {
-          markAuthenticated,
-          messageGrammarValidatorWithLatentReporting
-        } = getAsyncMessageGrammarValidator();
+        const messageGrammarValidatorWithLatentReporting = getMessageGrammarValidator({ delayReporting: true });
         const parsed2 = await openpgp.PacketList.fromBinary(packets.write(), allAllowedPackets, openpgp.config, messageGrammarValidatorWithLatentReporting);
         expect(parsed2.length).to.equal(1);
         const sampleGrammarValidatorReturnValue = isPartial => messageGrammarValidatorWithLatentReporting([] /* valid */, isPartial, openpgp.config);
-        const preAuthPartialGrammarPromise = sampleGrammarValidatorReturnValue(true); // returns Promise<undefined>
-        const preAuthFullGrammarPromise = sampleGrammarValidatorReturnValue(false); // returns Promise<undefined>, but internal promise is resolved
-        const authPromise = markAuthenticated(); // returns Promise<true>
-        // no promise should reject since the data is valid
-        await expect(preAuthPartialGrammarPromise).to.be.fulfilled;
-        await expect(preAuthFullGrammarPromise).to.be.fulfilled;
-        await expect(authPromise).to.be.fulfilled;
-        const postAuthPromise = sampleGrammarValidatorReturnValue(); // returns Promise<true>
-        await expect(postAuthPromise).to.be.fulfilled;
-        // ensure validation result was not returned prior to `markAuthenticated` invokation.
-        expect(await preAuthPartialGrammarPromise === await preAuthFullGrammarPromise).to.be.true;
-        expect(await preAuthFullGrammarPromise === await postAuthPromise).to.be.false;
-        expect(await authPromise === await postAuthPromise).to.be.true;
+        expect(sampleGrammarValidatorReturnValue(true)).to.be.null;
+        expect(sampleGrammarValidatorReturnValue(false)).to.be.true;
       });
 
       it('accepts unknown packets', async () => {
         const unknownPacketTag63 = util.hexToUint8Array('ff0a750064bf943d6e756c6c'); // non-critical tag
-        const parsed = await openpgp.PacketList.fromBinary(unknownPacketTag63, allAllowedPackets, openpgp.config, getSyncMessageGrammarValidator());
+        const parsed = await openpgp.PacketList.fromBinary(unknownPacketTag63, allAllowedPackets, openpgp.config, getMessageGrammarValidator({ delayReporting: false }));
         expect(parsed.length).to.equal(0);
+      });
 
-        const {
-          markAuthenticated,
-          messageGrammarValidatorWithLatentReporting
-        } = getAsyncMessageGrammarValidator();
-        const parsed2 = await openpgp.PacketList.fromBinary(unknownPacketTag63, allAllowedPackets, openpgp.config, messageGrammarValidatorWithLatentReporting);
-        expect(parsed2.length).to.equal(0);
-        const sampleGrammarValidatorReturnValue = isPartial => messageGrammarValidatorWithLatentReporting([] /* valid */, isPartial, openpgp.config);
-        const preAuthPartialGrammarPromise = sampleGrammarValidatorReturnValue(true); // returns Promise<undefined>
-        const preAuthFullGrammarPromise = sampleGrammarValidatorReturnValue(false); // returns Promise<undefined>, but internal promise is resolved
-        const authPromise = markAuthenticated(); // returns Promise<true>
-        // no promise should reject since the data is valid
-        await expect(preAuthPartialGrammarPromise).to.be.fulfilled;
-        await expect(preAuthFullGrammarPromise).to.be.fulfilled;
-        await expect(authPromise).to.be.fulfilled;
-        const postAuthPromise = sampleGrammarValidatorReturnValue(); // returns Promise<true>
-        await expect(postAuthPromise).to.be.fulfilled;
-        // ensure validation result was not returned prior to `markAuthenticated` invokation.
-        expect(await preAuthPartialGrammarPromise === await preAuthFullGrammarPromise).to.be.true;
-        expect(await preAuthFullGrammarPromise === await postAuthPromise).to.be.false;
-        expect(await authPromise === await postAuthPromise).to.be.true;
+      it('delay reporting', () => {
+        const messageGrammarValidatorWithLatentReporting = getMessageGrammarValidator({ delayReporting: true });
+
+        const sampleGrammarValidatorReturnValueValid = isPartial => messageGrammarValidatorWithLatentReporting([] /* valid */, isPartial, openpgp.config);
+        expect(sampleGrammarValidatorReturnValueValid(true)).to.be.null;
+        expect(sampleGrammarValidatorReturnValueValid(false)).to.be.true;
+
+        const sampleGrammarValidatorReturnValueInvalid = isPartial => messageGrammarValidatorWithLatentReporting([openpgp.enums.packet.literalData, openpgp.enums.packet.literalData] /* invalid */, isPartial, openpgp.config);
+        expect(sampleGrammarValidatorReturnValueInvalid(true)).to.be.null;
+        expect(() => sampleGrammarValidatorReturnValueInvalid(false)).to.throw(/Data does not respect OpenPGP grammar/);
       });
     });
   });
