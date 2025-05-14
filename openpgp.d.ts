@@ -13,7 +13,7 @@ import type { WebStream as GenericWebStream, NodeWebStream as GenericNodeWebStre
 import enums from './src/enums';
 import config, { type Config, type PartialConfig } from './src/config';
 
-export { enums, config, PartialConfig };
+export { enums, config, Config, PartialConfig };
 
 /* ############## STREAM #################### */
 type Data = Uint8Array | string;
