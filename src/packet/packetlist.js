@@ -119,6 +119,8 @@ class PacketList extends Array {
               } else {
                 const unparsedPacket = new UnparseablePacket(parsed.tag, parsed.packet);
                 await writer.write(unparsedPacket);
+                writtenTags.push(parsed.tag);
+                grammarValidator?.(writtenTags, true, config);
               }
               util.printDebugError(e);
             }
