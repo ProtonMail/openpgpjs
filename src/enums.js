@@ -112,7 +112,8 @@ export default {
     pqc_mlkem_x25519: 105,
     /** Post-quantum ML-DSA-64 + Ed25519 (Sign only) */
     pqc_mldsa_ed25519: 107,
-
+    /** Post-quantum SLH-DSA-128S (Sign only) */
+    pqc_slhdsa_shake128s: 109,
     /** Persistent symmetric keys: encryption algorithm */
     aead: 100,
     /** Persistent symmetric keys: authentication algorithm */
