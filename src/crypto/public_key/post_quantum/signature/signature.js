@@ -15,12 +15,6 @@ export async function generate(algo) {
 }
 
 export async function sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, mldsaSecretKey, dataDigest) {
-  if (hashAlgo !== getRequiredHashAlgo(signatureAlgo)) {
-    // The signature hash algo MUST be set to the specified algorithm, see
-    // https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-pqc#section-5.2.1.
-    throw new Error('Unexpected hash algorithm for PQC signature');
-  }
-
   switch (signatureAlgo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { eccSignature } = await eccdsa.sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, dataDigest);
@@ -34,12 +28,6 @@ export async function sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, 
 }
 
 export async function verify(signatureAlgo, hashAlgo, eccPublicKey, mldsaPublicKey, dataDigest, { eccSignature, mldsaSignature }) {
-  if (hashAlgo !== getRequiredHashAlgo(signatureAlgo)) {
-    // The signature hash algo MUST be set to the specified algorithm, see
-    // https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-pqc#section-5.2.1.
-    throw new Error('Unexpected hash algorithm for PQC signature');
-  }
-
   switch (signatureAlgo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const eccVerifiedPromise = eccdsa.verify(signatureAlgo, hashAlgo, eccPublicKey, dataDigest, eccSignature);
@@ -47,16 +35,6 @@ export async function verify(signatureAlgo, hashAlgo, eccPublicKey, mldsaPublicK
       const verified = await eccVerifiedPromise && await mldsaVerifiedPromise;
       return verified;
     }
-    default:
-      throw new Error('Unsupported signature algorithm');
-  }
-}
-
-export function getRequiredHashAlgo(signatureAlgo) {
-  // See https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-pqc#section-5.2.1.
-  switch (signatureAlgo) {
-    case enums.publicKey.pqc_mldsa_ed25519:
-      return enums.hash.sha3_256;
     default:
       throw new Error('Unsupported signature algorithm');
   }
