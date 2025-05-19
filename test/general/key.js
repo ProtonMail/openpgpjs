@@ -4620,7 +4620,7 @@ I8kWVkXU6vFOi+HWvv/ira7ofJu16NnoUkhclkUrk0mXubZvyl4GBg==
       expect(v4Key.keyPacket.version).to.equal(4);
       expect(v4Key.subkeys).to.have.length(1);
       // try adding an ML-DSA subkey
-      await expect(v4Key.addSubkey({ type: 'pqc', sign: true })).to.be.rejectedWith(/Cannot generate v4 keys of type 'pqc'/);
+      await expect(v4Key.addSubkey({ type: 'pqc', sign: true })).to.be.rejectedWith(/Cannot generate v4 signing keys of type 'pqc'/);
       expect(v4Key.subkeys).to.have.length(1);
     });
 
