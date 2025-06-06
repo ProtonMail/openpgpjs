@@ -77,13 +77,15 @@ export async function generate(algo) {
  * @param {Uint8Array} publicKey - Public key
  * @param {Uint8Array} privateKey - Private key used to sign the message
  * @param {Uint8Array} hashed - The hashed message
+ * @param {Boolean} disableHashLengthCheck - whether to skip the hash digest check; this is needed when
+ *  the function is called in the context of PQC composite signatures, that have different hash size requirements.
  * @returns {Promise<{
  *   RS: Uint8Array
  * }>} Signature of the message
  * @async
  */
-export async function sign(algo, hashAlgo, message, publicKey, privateKey, hashed) {
-  if (getHashByteLength(hashAlgo) < getHashByteLength(getPreferredHashAlgo(algo))) {
+export async function sign(algo, hashAlgo, message, publicKey, privateKey, hashed, disableHashLengthCheck = false) {
+  if (!disableHashLengthCheck && getHashByteLength(hashAlgo) < getHashByteLength(getPreferredHashAlgo(algo))) {
     // Enforce digest sizes:
     // - Ed25519: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.4-4
     // - Ed448: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.5-4
@@ -129,11 +131,13 @@ export async function sign(algo, hashAlgo, message, publicKey, privateKey, hashe
  * @param {Uint8Array} m - Message to verify
  * @param {Uint8Array} publicKey - Public key used to verify the message
  * @param {Uint8Array} hashed - The hashed message
+ * @param {Boolean} disableHashLengthCheck - whether to skip the hash digest check; this is needed when
+ *  the function is called in the context of PQC composite signatures, that have different hash size requirements.
  * @returns {Boolean}
  * @async
  */
-export async function verify(algo, hashAlgo, { RS }, m, publicKey, hashed) {
-  if (getHashByteLength(hashAlgo) < getHashByteLength(getPreferredHashAlgo(algo))) {
+export async function verify(algo, hashAlgo, { RS }, m, publicKey, hashed, disableHashLengthCheck = false) {
+  if (!disableHashLengthCheck && getHashByteLength(hashAlgo) < getHashByteLength(getPreferredHashAlgo(algo))) {
     // Enforce digest sizes:
     // - Ed25519: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.4-4
     // - Ed448: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.5-4

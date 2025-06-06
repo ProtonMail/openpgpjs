@@ -9,7 +9,7 @@ import {
   SignaturePacket
 } from '../packet';
 import enums from '../enums';
-import { getPreferredCurveHashAlgo, getHashByteLength } from '../crypto';
+import { getPreferredCurveHashAlgo, getHashByteLength, publicKey } from '../crypto';
 import util from '../util';
 import defaultConfig from '../config';
 
@@ -164,6 +164,10 @@ export async function getPreferredHashAlgo(targetKeys, signingKeyPacket, date = 
     enums.publicKey.ed448
   ]);
 
+  const pqcAlgos = new Set([
+    enums.publicKey.pqc_mldsa_ed25519
+  ]);
+
   if (eccAlgos.has(signingKeyPacket.algorithm)) {
     // For ECC, the returned hash algo MUST be at least as strong as `preferredCurveHashAlgo`, see:
     // - ECDSA: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.2-5
@@ -185,6 +189,21 @@ export async function getPreferredHashAlgo(targetKeys, signingKeyPacket, date = 
       return getHashByteLength(strongestSupportedAlgo) >= getHashByteLength(preferredCurveAlgo) ?
         strongestSupportedAlgo :
         preferredCurveAlgo;
+    }
+  } else if (pqcAlgos.has(signingKeyPacket.algorithm)) {
+    // For PQC, the returned hash algo MUST be at least 256 bit long, see:
+    // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4 .
+    // Hence, we return the `preferredHashAlgo` as long as it's supported and long enough;
+    // Otherwise, we look at the strongest supported algo, and ultimately fallback the default algo (SHA-256).
+    const preferredSenderAlgoIsSupported = isSupportedHashAlgo(preferredSenderAlgo) && publicKey.postQuantum.signature.isCompatibleHashAlgo(signingKeyPacket.algorithm, preferredSenderAlgo);
+
+    if (preferredSenderAlgoIsSupported) {
+      return preferredSenderAlgo;
+    } else {
+      const strongestSupportedAlgo = getStrongestSupportedHashAlgo();
+      return publicKey.postQuantum.signature.isCompatibleHashAlgo(signingKeyPacket.algorithm, strongestSupportedAlgo) ?
+        strongestSupportedAlgo :
+        defaultAlgo;
     }
   }
 

@@ -860,6 +860,96 @@ Fy70NCeqH2b6JeETZ1xFQEiEInk6B9WE558S9Mi6yjeSXdV65yNK2km5
     expect(signingKey1.getKeyID().equals(signingKey2.getKeyID())).to.be.true;
   });
 
+  it('ML-DSA + Ed25519 - throws on unexpected signature algorithm', async () => {
+    // The signature hash algo MUST have digest larger than 256 bits
+    // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4
+    const messageWithInvalidSignature = await openpgp.readMessage({ armoredMessage: `-----BEGIN PGP MESSAGE-----
+
+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
+BQsQGR4j
+-----END PGP MESSAGE-----` });
+    const publicKey = await openpgp.readKey({ armoredKey: mldsaEd25519AndMlkemX25519PublicKey });
+
+    await expect(openpgp.verify({ message: messageWithInvalidSignature, verificationKeys: publicKey, expectSigned: true })).to.be.rejectedWith(/Unexpected hash algorithm for PQC signature/);
+  });
+
   it('ML-DSA + ML-KEM - Test vector: decrypt/verify', async function () {
     // Test vector from: https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-09.html#appendix-A.3
     const privateKey = await openpgp.readKey({ armoredKey: mldsaEd25519AndMlkemX25519PrivateKey });

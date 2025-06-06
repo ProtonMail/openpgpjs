@@ -1,6 +1,7 @@
 import enums from '../../../../enums';
 import * as mldsa from './ml_dsa';
 import * as eccdsa from './ecc_dsa';
+import { getHashByteLength } from '../../../hash';
 
 export async function generate(algo) {
   switch (algo) {
@@ -15,6 +16,11 @@ export async function generate(algo) {
 }
 
 export async function sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, mldsaSecretKey, dataDigest) {
+  if (!isCompatibleHashAlgo(signatureAlgo, hashAlgo)) {
+    // The signature hash algo MUST have digest larger than 256 bits
+    // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4
+    throw new Error('Unexpected hash algorithm for PQC signature: digest size too short');
+  }
   switch (signatureAlgo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { eccSignature } = await eccdsa.sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, dataDigest);
@@ -28,6 +34,11 @@ export async function sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, 
 }
 
 export async function verify(signatureAlgo, hashAlgo, eccPublicKey, mldsaPublicKey, dataDigest, { eccSignature, mldsaSignature }) {
+  if (!isCompatibleHashAlgo(signatureAlgo, hashAlgo)) {
+    // The signature hash algo MUST have digest larger than 256 bits
+    // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4
+    throw new Error('Unexpected hash algorithm for PQC signature: digest size too short');
+  }
   switch (signatureAlgo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const eccVerifiedPromise = eccdsa.verify(signatureAlgo, hashAlgo, eccPublicKey, dataDigest, eccSignature);
@@ -35,6 +46,17 @@ export async function verify(signatureAlgo, hashAlgo, eccPublicKey, mldsaPublicK
       const verified = await eccVerifiedPromise && await mldsaVerifiedPromise;
       return verified;
     }
+    default:
+      throw new Error('Unsupported signature algorithm');
+  }
+}
+
+export function isCompatibleHashAlgo(signatureAlgo, hashAlgo) {
+  // The signature hash algo MUST have digest larger than 256 bits
+  // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4
+  switch (signatureAlgo) {
+    case enums.publicKey.pqc_mldsa_ed25519:
+      return getHashByteLength(hashAlgo) >= 32;
     default:
       throw new Error('Unsupported signature algorithm');
   }
