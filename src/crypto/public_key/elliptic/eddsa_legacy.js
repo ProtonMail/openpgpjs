@@ -24,7 +24,6 @@
 import naclEd25519 from '@openpgp/tweetnacl'; // better constant-timeness as it uses Uint8Arrays over BigInts
 import util from '../../../util';
 import enums from '../../../enums';
-import { getHashByteLength } from '../../hash';
 import { CurveWithOID, checkPublicPointEnconding } from './oid_curves';
 import { sign as eddsaSign, verify as eddsaVerify } from './eddsa';
 
@@ -45,12 +44,6 @@ import { sign as eddsaSign, verify as eddsaVerify } from './eddsa';
 export async function sign(oid, hashAlgo, message, publicKey, privateKey, hashed) {
   const curve = new CurveWithOID(oid);
   checkPublicPointEnconding(curve, publicKey);
-  if (getHashByteLength(hashAlgo) < getHashByteLength(enums.hash.sha256)) {
-    // Enforce digest sizes, since the constraint was already present in RFC4880bis:
-    // see https://tools.ietf.org/id/draft-ietf-openpgp-rfc4880bis-10.html#section-15-7.2
-    // and https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.3-3
-    throw new Error('Hash algorithm too weak for EdDSA.');
-  }
   const { RS: signature } = await eddsaSign(enums.publicKey.ed25519, hashAlgo, message, publicKey.subarray(1), privateKey, hashed);
   // EdDSA signature params are returned in little-endian format
   return {
@@ -74,12 +67,6 @@ export async function sign(oid, hashAlgo, message, publicKey, privateKey, hashed
 export async function verify(oid, hashAlgo, { r, s }, m, publicKey, hashed) {
   const curve = new CurveWithOID(oid);
   checkPublicPointEnconding(curve, publicKey);
-  if (getHashByteLength(hashAlgo) < getHashByteLength(enums.hash.sha256)) {
-    // Enforce digest sizes, since the constraint was already present in RFC4880bis:
-    // see https://tools.ietf.org/id/draft-ietf-openpgp-rfc4880bis-10.html#section-15-7.2
-    // and https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.3-3
-    throw new Error('Hash algorithm too weak for EdDSA.');
-  }
   const RS = util.concatUint8Array([r, s]);
   return eddsaVerify(enums.publicKey.ed25519, hashAlgo, { RS }, m, publicKey.subarray(1), hashed);
 }

@@ -1,6 +1,7 @@
 import enums from '../../../../enums';
 import * as mldsa from './ml_dsa';
 import * as eccdsa from './ecc_dsa';
+import { getHashByteLength } from '../../../hash';
 
 export async function generate(algo) {
   switch (algo) {
@@ -15,12 +16,6 @@ export async function generate(algo) {
 }
 
 export async function sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, mldsaSecretKey, dataDigest) {
-  if (hashAlgo !== getRequiredHashAlgo(signatureAlgo)) {
-    // The signature hash algo MUST be set to the specified algorithm, see
-    // https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-pqc#section-5.2.1.
-    throw new Error('Unexpected hash algorithm for PQC signature');
-  }
-
   switch (signatureAlgo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const { eccSignature } = await eccdsa.sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, dataDigest);
@@ -34,12 +29,6 @@ export async function sign(signatureAlgo, hashAlgo, eccSecretKey, eccPublicKey, 
 }
 
 export async function verify(signatureAlgo, hashAlgo, eccPublicKey, mldsaPublicKey, dataDigest, { eccSignature, mldsaSignature }) {
-  if (hashAlgo !== getRequiredHashAlgo(signatureAlgo)) {
-    // The signature hash algo MUST be set to the specified algorithm, see
-    // https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-pqc#section-5.2.1.
-    throw new Error('Unexpected hash algorithm for PQC signature');
-  }
-
   switch (signatureAlgo) {
     case enums.publicKey.pqc_mldsa_ed25519: {
       const eccVerifiedPromise = eccdsa.verify(signatureAlgo, hashAlgo, eccPublicKey, dataDigest, eccSignature);
@@ -52,11 +41,12 @@ export async function verify(signatureAlgo, hashAlgo, eccPublicKey, mldsaPublicK
   }
 }
 
-export function getRequiredHashAlgo(signatureAlgo) {
-  // See https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-pqc#section-5.2.1.
+export function isCompatibleHashAlgo(signatureAlgo, hashAlgo) {
+  // The signature hash algo MUST have digest larger than 256 bits
+  // https://www.ietf.org/archive/id/draft-ietf-openpgp-pqc-10.html#section-9.4
   switch (signatureAlgo) {
     case enums.publicKey.pqc_mldsa_ed25519:
-      return enums.hash.sha3_256;
+      return getHashByteLength(hashAlgo) >= 32;
     default:
       throw new Error('Unsupported signature algorithm');
   }
