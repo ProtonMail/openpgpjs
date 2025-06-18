@@ -25,7 +25,6 @@ import { verify as nobleEd25519Verify } from '@noble/ed25519';
 
 import util from '../../../util';
 import enums from '../../../enums';
-import { getHashByteLength } from '../../hash';
 import { getRandomBytes } from '../../random';
 import { b64ToUint8Array, uint8ArrayToB64 } from '../../../encoding/base64';
 
@@ -77,20 +76,12 @@ export async function generate(algo) {
  * @param {Uint8Array} publicKey - Public key
  * @param {Uint8Array} privateKey - Private key used to sign the message
  * @param {Uint8Array} hashed - The hashed message
- * @param {Boolean} disableHashLengthCheck - whether to skip the hash digest check; this is needed when
- *  the function is called in the context of PQC composite signatures, that have different hash size requirements.
  * @returns {Promise<{
  *   RS: Uint8Array
  * }>} Signature of the message
  * @async
  */
-export async function sign(algo, hashAlgo, message, publicKey, privateKey, hashed, disableHashLengthCheck = false) {
-  if (!disableHashLengthCheck && getHashByteLength(hashAlgo) < getHashByteLength(getPreferredHashAlgo(algo))) {
-    // Enforce digest sizes:
-    // - Ed25519: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.4-4
-    // - Ed448: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.5-4
-    throw new Error('Hash algorithm too weak for EdDSA.');
-  }
+export async function sign(algo, hashAlgo, message, publicKey, privateKey, hashed) {
   switch (algo) {
     case enums.publicKey.ed25519:
       try {
@@ -131,18 +122,10 @@ export async function sign(algo, hashAlgo, message, publicKey, privateKey, hashe
  * @param {Uint8Array} m - Message to verify
  * @param {Uint8Array} publicKey - Public key used to verify the message
  * @param {Uint8Array} hashed - The hashed message
- * @param {Boolean} disableHashLengthCheck - whether to skip the hash digest check; this is needed when
- *  the function is called in the context of PQC composite signatures, that have different hash size requirements.
  * @returns {Boolean}
  * @async
  */
-export async function verify(algo, hashAlgo, { RS }, m, publicKey, hashed, disableHashLengthCheck = false) {
-  if (!disableHashLengthCheck && getHashByteLength(hashAlgo) < getHashByteLength(getPreferredHashAlgo(algo))) {
-    // Enforce digest sizes:
-    // - Ed25519: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.4-4
-    // - Ed448: https://www.rfc-editor.org/rfc/rfc9580.html#section-5.2.3.5-4
-    throw new Error('Hash algorithm too weak for EdDSA.');
-  }
+export async function verify(algo, hashAlgo, { RS }, m, publicKey, hashed) {
   switch (algo) {
     case enums.publicKey.ed25519:
       try {
