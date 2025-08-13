@@ -16,7 +16,7 @@ import config, { type Config, type PartialConfig } from './src/config';
 export { enums, config, Config, PartialConfig };
 
 /* ############## STREAM #################### */
-type Data = Uint8Array | string;
+type Data = Uint8Array<ArrayBuffer> | string;
 // web-stream-tools might end up supporting additional data types, so we re-declare the types
 // to enforce the type contraint that we need.
 export type WebStream<T extends Data> = GenericWebStream<T>;
@@ -29,29 +29,29 @@ type MaybeArray<T> = T | Array<T>;
 // The Key and PublicKey types can be used interchangably since TS cannot detect the difference, as they have the same class properties.
 // The declared readKey(s) return type is Key instead of a PublicKey since it seems more obvious that a Key can be cast to a PrivateKey.
 export function readKey(options: { armoredKey: string, config?: PartialConfig }): Promise<Key>;
-export function readKey(options: { binaryKey: Uint8Array, config?: PartialConfig }): Promise<Key>;
+export function readKey(options: { binaryKey: Uint8Array<ArrayBuffer>, config?: PartialConfig }): Promise<Key>;
 export function readKeys(options: { armoredKeys: string, config?: PartialConfig }): Promise<Key[]>;
-export function readKeys(options: { binaryKeys: Uint8Array, config?: PartialConfig }): Promise<Key[]>;
+export function readKeys(options: { binaryKeys: Uint8Array<ArrayBuffer>, config?: PartialConfig }): Promise<Key[]>;
 export function readPrivateKey(options: { armoredKey: string, config?: PartialConfig }): Promise<PrivateKey>;
-export function readPrivateKey(options: { binaryKey: Uint8Array, config?: PartialConfig }): Promise<PrivateKey>;
+export function readPrivateKey(options: { binaryKey: Uint8Array<ArrayBuffer>, config?: PartialConfig }): Promise<PrivateKey>;
 export function readPrivateKeys(options: { armoredKeys: string, config?: PartialConfig }): Promise<PrivateKey[]>;
-export function readPrivateKeys(options: { binaryKeys: Uint8Array, config?: PartialConfig }): Promise<PrivateKey[]>;
+export function readPrivateKeys(options: { binaryKeys: Uint8Array<ArrayBuffer>, config?: PartialConfig }): Promise<PrivateKey[]>;
 export function generateKey(options: GenerateKeyOptions & { format?: 'armored' }): Promise<SerializedKeyPair<string> & { revocationCertificate: string }>;
-export function generateKey(options: GenerateKeyOptions & { format: 'binary' }): Promise<SerializedKeyPair<Uint8Array> & { revocationCertificate: string }>;
+export function generateKey(options: GenerateKeyOptions & { format: 'binary' }): Promise<SerializedKeyPair<Uint8Array<ArrayBuffer>> & { revocationCertificate: string }>;
 export function generateKey(options: GenerateKeyOptions & { format: 'object' }): Promise<KeyPair & { revocationCertificate: string }>;
 export function decryptKey(options: { privateKey: PrivateKey; passphrase?: MaybeArray<string>; config?: PartialConfig }): Promise<PrivateKey>;
 export function encryptKey(options: { privateKey: PrivateKey; passphrase?: MaybeArray<string>; config?: PartialConfig }): Promise<PrivateKey>;
 export function reformatKey(options: { privateKey: PrivateKey; userIDs?: MaybeArray<UserID>; passphrase?: string; keyExpirationTime?: number; date?: Date, format?: 'armored', config?: PartialConfig }): Promise<SerializedKeyPair<string> & { revocationCertificate: string }>;
-export function reformatKey(options: { privateKey: PrivateKey; userIDs?: MaybeArray<UserID>; passphrase?: string; keyExpirationTime?: number; date?: Date, format: 'binary', config?: PartialConfig }): Promise<SerializedKeyPair<Uint8Array> & { revocationCertificate: string }>;
+export function reformatKey(options: { privateKey: PrivateKey; userIDs?: MaybeArray<UserID>; passphrase?: string; keyExpirationTime?: number; date?: Date, format: 'binary', config?: PartialConfig }): Promise<SerializedKeyPair<Uint8Array<ArrayBuffer>> & { revocationCertificate: string }>;
 export function reformatKey(options: { privateKey: PrivateKey; userIDs?: MaybeArray<UserID>; passphrase?: string; keyExpirationTime?: number; date?: Date, format: 'object', config?: PartialConfig }): Promise<KeyPair & { revocationCertificate: string }>;
 export function revokeKey(options: { key: PrivateKey, reasonForRevocation?: ReasonForRevocation, date?: Date, format?: 'armored', config?: PartialConfig }): Promise<SerializedKeyPair<string>>;
-export function revokeKey(options: { key: PrivateKey, reasonForRevocation?: ReasonForRevocation, date?: Date, format: 'binary', config?: PartialConfig }): Promise<SerializedKeyPair<Uint8Array>>;
+export function revokeKey(options: { key: PrivateKey, reasonForRevocation?: ReasonForRevocation, date?: Date, format: 'binary', config?: PartialConfig }): Promise<SerializedKeyPair<Uint8Array<ArrayBuffer>>>;
 export function revokeKey(options: { key: PrivateKey, reasonForRevocation?: ReasonForRevocation, date?: Date, format: 'object', config?: PartialConfig }): Promise<KeyPair>;
 export function revokeKey(options: { key: PrivateKey, revocationCertificate: string, date?: Date, format?: 'armored', config?: PartialConfig }): Promise<SerializedKeyPair<string>>;
-export function revokeKey(options: { key: PrivateKey, revocationCertificate: string, date?: Date, format: 'binary', config?: PartialConfig }): Promise<SerializedKeyPair<Uint8Array>>;
+export function revokeKey(options: { key: PrivateKey, revocationCertificate: string, date?: Date, format: 'binary', config?: PartialConfig }): Promise<SerializedKeyPair<Uint8Array<ArrayBuffer>>>;
 export function revokeKey(options: { key: PrivateKey, revocationCertificate: string, date?: Date, format: 'object', config?: PartialConfig }): Promise<KeyPair>;
 export function revokeKey(options: { key: PublicKey, revocationCertificate: string, date?: Date, format?: 'armored', config?: PartialConfig }): Promise<{ publicKey: string, privateKey: null }>;
-export function revokeKey(options: { key: PublicKey, revocationCertificate: string, date?: Date, format: 'binary', config?: PartialConfig }): Promise<{ publicKey: Uint8Array, privateKey: null }>;
+export function revokeKey(options: { key: PublicKey, revocationCertificate: string, date?: Date, format: 'binary', config?: PartialConfig }): Promise<{ publicKey: Uint8Array<ArrayBuffer>, privateKey: null }>;
 export function revokeKey(options: { key: PublicKey, revocationCertificate: string, date?: Date, format: 'object', config?: PartialConfig }): Promise<{ publicKey: PublicKey, privateKey: null }>;
 
 export abstract class Key {
@@ -59,7 +59,7 @@ export abstract class Key {
   public subkeys: Subkey[]; // do not add/replace users directly
   public users: User[]; // do not add/replace subkeys directly
   public revocationSignatures: SignaturePacket[];
-  public write(): Uint8Array;
+  public write(): Uint8Array<ArrayBuffer>;
   public armor(config?: Config): string;
   public getExpirationTime(userID?: UserID, config?: Config): Promise<Date | typeof Infinity | null>;
   public getKeyIDs(): KeyID[];
@@ -159,12 +159,12 @@ export type AlgorithmInfo = {
 /* ############## SIG #################### */
 
 export function readSignature(options: { armoredSignature: string, config?: PartialConfig }): Promise<Signature>;
-export function readSignature(options: { binarySignature: Uint8Array, config?: PartialConfig }): Promise<Signature>;
+export function readSignature(options: { binarySignature: Uint8Array<ArrayBuffer>, config?: PartialConfig }): Promise<Signature>;
 
 export class Signature {
   public readonly packets: PacketList<SignaturePacket>;
   constructor(packetlist: PacketList<SignaturePacket>);
-  public write(): MaybeStream<Uint8Array>;
+  public write(): MaybeStream<Uint8Array<ArrayBuffer>>;
   public armor(config?: Config): string;
   public getSigningKeyIDs(): Array<KeyID>;
 }
@@ -211,15 +211,15 @@ export class CleartextMessage {
 /* ############## MSG #################### */
 export function generateSessionKey(options: { encryptionKeys: MaybeArray<PublicKey>, date?: Date, encryptionUserIDs?: MaybeArray<UserID>, config?: PartialConfig }): Promise<SessionKey>;
 export function encryptSessionKey(options: EncryptSessionKeyOptions & { format?: 'armored' }): Promise<string>;
-export function encryptSessionKey(options: EncryptSessionKeyOptions & { format: 'binary' }): Promise<Uint8Array>;
+export function encryptSessionKey(options: EncryptSessionKeyOptions & { format: 'binary' }): Promise<Uint8Array<ArrayBuffer>>;
 export function encryptSessionKey(options: EncryptSessionKeyOptions & { format: 'object' }): Promise<Message<Data>>;
 export function decryptSessionKeys<T extends MaybeStream<Data>>(options: { message: Message<T>, decryptionKeys?: MaybeArray<PrivateKey>, passwords?: MaybeArray<string>, date?: Date, config?: PartialConfig }): Promise<DecryptedSessionKey[]>;
 
 export function readMessage<T extends MaybeStream<string>>(options: { armoredMessage: T, config?: PartialConfig }): Promise<Message<T>>;
-export function readMessage<T extends MaybeStream<Uint8Array>>(options: { binaryMessage: T, config?: PartialConfig }): Promise<Message<T>>;
+export function readMessage<T extends MaybeStream<Uint8Array<ArrayBuffer>>>(options: { binaryMessage: T, config?: PartialConfig }): Promise<Message<T>>;
 
 export function createMessage<T extends MaybeStream<string>>(options: { text: T, filename?: string, date?: Date, format?: enums.literalFormatNames }): Promise<Message<T>>;
-export function createMessage<T extends MaybeStream<Uint8Array>>(options: { binary: T, filename?: string, date?: Date, format?: enums.literalFormatNames }): Promise<Message<T>>;
+export function createMessage<T extends MaybeStream<Uint8Array<ArrayBuffer>>>(options: { binary: T, filename?: string, date?: Date, format?: enums.literalFormatNames }): Promise<Message<T>>;
 
 export function encrypt<T extends MaybeStream<Data>>(options: EncryptOptions & { message: Message<T>, format?: 'armored' }): Promise<
   T extends WebStream<Data> ? WebStream<string> :
@@ -227,9 +227,9 @@ export function encrypt<T extends MaybeStream<Data>>(options: EncryptOptions & {
   string
 >;
 export function encrypt<T extends MaybeStream<Data>>(options: EncryptOptions & { message: Message<T>, format: 'binary' }): Promise<
-  T extends WebStream<Data> ? WebStream<Uint8Array> :
-  T extends NodeWebStream<Data> ? NodeWebStream<Uint8Array> :
-  Uint8Array
+  T extends WebStream<Data> ? WebStream<Uint8Array<ArrayBuffer>> :
+  T extends NodeWebStream<Data> ? NodeWebStream<Uint8Array<ArrayBuffer>> :
+  Uint8Array<ArrayBuffer>
 >;
 export function encrypt<T extends MaybeStream<Data>>(options: EncryptOptions & { message: Message<T>, format: 'object' }): Promise<Message<T>>;
 
@@ -239,9 +239,9 @@ export function sign<T extends MaybeStream<Data>>(options: SignOptions & { messa
   string
 >;
 export function sign<T extends MaybeStream<Data>>(options: SignOptions & { message: Message<T>, format: 'binary' }): Promise<
-  T extends WebStream<Data> ? WebStream<Uint8Array> :
-  T extends NodeWebStream<Data> ? NodeWebStream<Uint8Array> :
-  Uint8Array
+  T extends WebStream<Data> ? WebStream<Uint8Array<ArrayBuffer>> :
+  T extends NodeWebStream<Data> ? NodeWebStream<Uint8Array<ArrayBuffer>> :
+  Uint8Array<ArrayBuffer>
 >;
 export function sign<T extends MaybeStream<Data>>(options: SignOptions & { message: Message<T>, format: 'object' }): Promise<Message<T>>;
 export function sign(options: SignOptions & { message: CleartextMessage, format?: 'armored' }): Promise<string>;
@@ -249,9 +249,9 @@ export function sign(options: SignOptions & { message: CleartextMessage, format:
 
 export function decrypt<T extends MaybeStream<Data>>(options: DecryptOptions & { message: Message<T>, format: 'binary' }): Promise<DecryptMessageResult & {
   data:
-  T extends WebStream<Data> ? WebStream<Uint8Array> :
-  T extends NodeWebStream<Data> ? NodeWebStream<Uint8Array> :
-  Uint8Array
+  T extends WebStream<Data> ? WebStream<Uint8Array<ArrayBuffer>> :
+  T extends NodeWebStream<Data> ? NodeWebStream<Uint8Array<ArrayBuffer>> :
+  Uint8Array<ArrayBuffer>
 }>;
 export function decrypt<T extends MaybeStream<Data>>(options: DecryptOptions & { message: Message<T> }): Promise<DecryptMessageResult & {
   data:
@@ -262,9 +262,9 @@ export function decrypt<T extends MaybeStream<Data>>(options: DecryptOptions & {
 
 export function verify(options: VerifyOptions & { message: CleartextMessage, format?: 'utf8' }): Promise<VerifyMessageResult<string>>;
 export function verify<T extends MaybeStream<Data>>(options: VerifyOptions & { message: Message<T>, format: 'binary' }): Promise<VerifyMessageResult<
-  T extends WebStream<Data> ? WebStream<Uint8Array> :
-  T extends NodeWebStream<Data> ? NodeWebStream<Uint8Array> :
-  Uint8Array
+  T extends WebStream<Data> ? WebStream<Uint8Array<ArrayBuffer>> :
+  T extends NodeWebStream<Data> ? NodeWebStream<Uint8Array<ArrayBuffer>> :
+  Uint8Array<ArrayBuffer>
 >>;
 export function verify<T extends MaybeStream<Data>>(options: VerifyOptions & { message: Message<T> }): Promise<VerifyMessageResult<
   T extends WebStream<Data> ? WebStream<string> :
@@ -281,7 +281,7 @@ export class Message<T extends MaybeStream<Data>> {
 
   /** Returns binary representation of message
    */
-  public write(): MaybeStream<Uint8Array>;
+  public write(): MaybeStream<Uint8Array<ArrayBuffer>>;
 
   /** Returns ASCII armored text of message
    */
@@ -303,7 +303,7 @@ export class Message<T extends MaybeStream<Data>> {
 
   /** Get literal data that is the body of the message
    */
-  public getLiteralData(): (T extends Stream<Data> ? WebStream<Uint8Array> : Uint8Array) | null;
+  public getLiteralData(): (T extends Stream<Data> ? WebStream<Uint8Array<ArrayBuffer>> : Uint8Array<ArrayBuffer>) | null;
 
   /** Returns the key IDs of the keys that signed the message
    */
@@ -331,17 +331,17 @@ export class Message<T extends MaybeStream<Data>> {
 
   /**
    * Append signature to unencrypted message object
-   * @param {String|Uint8Array} detachedSignature - The detached ASCII-armored or Uint8Array PGP signature
+   * @param {String|Uint8Array<ArrayBuffer>} detachedSignature - The detached ASCII-armored or Uint8Array<ArrayBuffer> PGP signature
    */
-  public appendSignature(detachedSignature: string | Uint8Array, config?: Config): Promise<void>;
+  public appendSignature(detachedSignature: string | Uint8Array<ArrayBuffer>, config?: Config): Promise<void>;
 }
 
 /* ############## PACKET #################### */
 
 export declare abstract class BasePacket {
   static readonly tag: enums.packet;
-  public read(bytes: Uint8Array): void;
-  public write(): Uint8Array;
+  public read(bytes: Uint8Array<ArrayBuffer>): void;
+  public write(): Uint8Array<ArrayBuffer>;
 }
 
 /**
@@ -355,7 +355,7 @@ declare abstract class BasePublicKeyPacket extends BasePacket {
   public version: number;
   public getAlgorithmInfo(): AlgorithmInfo;
   public getFingerprint(): string;
-  public getFingerprintBytes(): Uint8Array | null;
+  public getFingerprintBytes(): Uint8Array<ArrayBuffer> | null;
   public hasSameFingerprintAs(other: BasePublicKeyPacket): boolean;
   public getCreationTime(): Date;
   public getKeyID(): KeyID;
@@ -409,9 +409,9 @@ export class SymEncryptedIntegrityProtectedDataPacket extends BasePacket {
 
 export class AEADEncryptedDataPacket extends BasePacket {
   static readonly tag: enums.packet.aeadEncryptedData;
-  private decrypt(sessionKeyAlgorithm: enums.symmetric, sessionKey: Uint8Array, config?: Config): void;
-  private encrypt(sessionKeyAlgorithm: enums.symmetric, sessionKey: Uint8Array, config?: Config): void;
-  private crypt(fn: Function, sessionKey: Uint8Array, data: MaybeStream<Uint8Array>): MaybeStream<Uint8Array>;
+  private decrypt(sessionKeyAlgorithm: enums.symmetric, sessionKey: Uint8Array<ArrayBuffer>, config?: Config): void;
+  private encrypt(sessionKeyAlgorithm: enums.symmetric, sessionKey: Uint8Array<ArrayBuffer>, config?: Config): void;
+  private crypt(fn: Function, sessionKey: Uint8Array<ArrayBuffer>, data: MaybeStream<Uint8Array<ArrayBuffer>>): MaybeStream<Uint8Array<ArrayBuffer>>;
 }
 
 export class PublicKeyEncryptedSessionKeyPacket extends BasePacket {
@@ -429,18 +429,18 @@ export class SymEncryptedSessionKeyPacket extends BasePacket {
 export class LiteralDataPacket extends BasePacket {
   static readonly tag: enums.packet.literalData;
   private getText(clone?: boolean): MaybeStream<string>;
-  private getBytes(clone?: boolean): MaybeStream<Uint8Array>;
+  private getBytes(clone?: boolean): MaybeStream<Uint8Array<ArrayBuffer>>;
   private setText(text: MaybeStream<string>, format?: enums.literal);
-  private setBytes(bytes: MaybeStream<Uint8Array>, format: enums.literal);
+  private setBytes(bytes: MaybeStream<Uint8Array<ArrayBuffer>>, format: enums.literal);
   private setFilename(filename: string);
   private getFilename(): string;
-  private writeHeader(): Uint8Array;
+  private writeHeader(): Uint8Array<ArrayBuffer>;
 }
 
 export class SymmetricallyEncryptedDataPacket extends BasePacket {
   static readonly tag: enums.packet.symmetricallyEncryptedData;
-  private decrypt(sessionKeyAlgorithm: enums.symmetric, sessionKey: Uint8Array, config?: Config): void;
-  private encrypt(sessionKeyAlgorithm: enums.symmetric, sessionKey: Uint8Array, config?: Config): void;
+  private decrypt(sessionKeyAlgorithm: enums.symmetric, sessionKey: Uint8Array<ArrayBuffer>, config?: Config): void;
+  private encrypt(sessionKeyAlgorithm: enums.symmetric, sessionKey: Uint8Array<ArrayBuffer>, config?: Config): void;
 }
 
 export class MarkerPacket extends BasePacket {
@@ -473,10 +473,10 @@ export class SignaturePacket extends BasePacket {
   public signatureType: enums.signature | null;
   public hashAlgorithm: enums.hash | null;
   public publicKeyAlgorithm: enums.publicKey | null;
-  public signatureData: null | Uint8Array;
+  public signatureData: null | Uint8Array<ArrayBuffer>;
   public unhashedSubpackets: RawSubpacket[];
   public unknownSubpackets: RawSubpacket[];
-  public signedHashValue: null | Uint8Array;
+  public signedHashValue: null | Uint8Array<ArrayBuffer>;
   public created: Date | null;
   public signatureExpirationTime: null | number;
   public signatureNeverExpires: boolean;
@@ -490,7 +490,7 @@ export class SignaturePacket extends BasePacket {
   public preferredSymmetricAlgorithms: enums.symmetric[] | null;
   public revocationKeyClass: null | number;
   public revocationKeyAlgorithm: null | enums.publicKey;
-  public revocationKeyFingerprint: null | Uint8Array;
+  public revocationKeyFingerprint: null | Uint8Array<ArrayBuffer>;
   public issuerKeyID: KeyID;
   public notation: null | { [name: string]: string };
   public preferredHashAlgorithms: enums.hash[] | null;
@@ -499,22 +499,22 @@ export class SignaturePacket extends BasePacket {
   public preferredKeyServer: null | string;
   public isPrimaryUserID: null | boolean;
   public policyURI: null | string;
-  public keyFlags: Uint8Array | null;
+  public keyFlags: Uint8Array<ArrayBuffer> | null;
   public signersUserID: null | string;
   public reasonForRevocationFlag: null | enums.reasonForRevocation;
   public reasonForRevocationString: null | string;
-  public features: Uint8Array | null;
+  public features: Uint8Array<ArrayBuffer> | null;
   public signatureTargetPublicKeyAlgorithm: enums.publicKey | null;
   public signatureTargetHashAlgorithm: enums.hash | null;
   public signatureTargetHash: null | string;
   public embeddedSignature: null | SignaturePacket;
   public issuerKeyVersion: null | number;
-  public issuerFingerprint: null | Uint8Array;
+  public issuerFingerprint: null | Uint8Array<ArrayBuffer>;
   public preferredAEADAlgorithms: enums.aead[] | null;
   public revoked: null | boolean;
   public rawNotations: RawNotation[];
-  public sign(key: AnySecretKeyPacket, data: Uint8Array, date?: Date, detached?: boolean): Promise<void>;
-  public verify(key: AnyKeyPacket, signatureType: enums.signature, data: Uint8Array | object, date?: Date, detached?: boolean, config?: Config): Promise<void>; // throws on error
+  public sign(key: AnySecretKeyPacket, data: Uint8Array<ArrayBuffer>, date?: Date, detached?: boolean): Promise<void>;
+  public verify(key: AnyKeyPacket, signatureType: enums.signature, data: Uint8Array<ArrayBuffer> | object, date?: Date, detached?: boolean, config?: Config): Promise<void>; // throws on error
   public isExpired(date?: Date): boolean;
   public getExpirationTime(): Date | typeof Infinity;
 }
@@ -522,12 +522,12 @@ export class SignaturePacket extends BasePacket {
 export interface RawSubpacket {
   type: number;
   critical: boolean;
-  body: Uint8Array;
+  body: Uint8Array<ArrayBuffer>;
 }
 
 export interface RawNotation {
   name: string;
-  value: Uint8Array;
+  value: Uint8Array<ArrayBuffer>;
   humanReadable: boolean;
   critical: boolean;
 }
@@ -538,7 +538,7 @@ export class TrustPacket extends BasePacket {
 
 export class UnparseablePacket {
   tag: enums.packet;
-  write: () => Uint8Array;
+  write: () => Uint8Array<ArrayBuffer>;
 }
 
 export type AnyPacket = BasePacket | UnparseablePacket;
@@ -547,9 +547,9 @@ export type AnyKeyPacket = BasePublicKeyPacket;
 
 type AllowedPackets = Map<enums.packet, object>; // mapping to Packet classes (i.e. typeof LiteralDataPacket etc.)
 export class PacketList<T extends AnyPacket> extends Array<T> {
-  static fromBinary(bytes: MaybeStream<Uint8Array>, allowedPackets: AllowedPackets, config?: Config): PacketList<AnyPacket>; // the packet types depend on`allowedPackets`
-  public read(bytes: MaybeStream<Uint8Array>, allowedPackets: AllowedPackets, config?: Config): void;
-  public write(): Uint8Array;
+  static fromBinary(bytes: MaybeStream<Uint8Array<ArrayBuffer>>, allowedPackets: AllowedPackets, config?: Config): PacketList<AnyPacket>; // the packet types depend on`allowedPackets`
+  public read(bytes: MaybeStream<Uint8Array<ArrayBuffer>>, allowedPackets: AllowedPackets, config?: Config): void;
+  public write(): Uint8Array<ArrayBuffer>;
   public filterByTag(...args: enums.packet[]): PacketList<T>;
   public indexOfTag(...tags: enums.packet[]): number[];
   public findPacket(tag: enums.packet): T | undefined;
@@ -559,13 +559,13 @@ export class PacketList<T extends AnyPacket> extends Array<T> {
 
 export interface UserID { name?: string; email?: string; comment?: string; }
 export interface SessionKey {
-  data: Uint8Array;
+  data: Uint8Array<ArrayBuffer>;
   algorithm: enums.symmetricNames;
   aeadAlgorithm?: enums.aeadNames;
 }
 
 export interface DecryptedSessionKey {
-  data: Uint8Array;
+  data: Uint8Array<ArrayBuffer>;
   algorithm: enums.symmetricNames | null; // `null` if the session key is associated with a SEIPDv2 packet
 }
 
@@ -610,13 +610,13 @@ export interface DecryptOptions {
   decryptionKeys?: MaybeArray<PrivateKey>;
   /** (optional) passwords to decrypt the message */
   passwords?: MaybeArray<string>;
-  /** (optional) session keys in the form: { data:Uint8Array, algorithm:String } */
+  /** (optional) session keys in the form: { data:Uint8Array<ArrayBuffer>, algorithm:String } */
   sessionKeys?: MaybeArray<SessionKey>;
   /** (optional) array of public keys or single key, to verify signatures */
   verificationKeys?: MaybeArray<PublicKey>;
   /** (optional) whether data decryption should fail if the message is not signed with the provided publicKeys */
   expectSigned?: boolean;
-  /** (optional) whether to return data as a string(Stream) or Uint8Array(Stream). If 'utf8' (the default), also normalize newlines. */
+  /** (optional) whether to return data as a string(Stream) or Uint8Array<ArrayBuffer>(Stream). If 'utf8' (the default), also normalize newlines. */
   format?: 'utf8' | 'binary';
   /** (optional) detached signature for verification */
   signature?: Signature;
@@ -644,7 +644,7 @@ export interface VerifyOptions {
   verificationKeys: MaybeArray<PublicKey>;
   /** (optional) whether verification should throw if the message is not signed with the provided publicKeys */
   expectSigned?: boolean;
-  /** (optional) whether to return data as a string(Stream) or Uint8Array(Stream). If 'utf8' (the default), also normalize newlines. */
+  /** (optional) whether to return data as a string(Stream) or Uint8Array<ArrayBuffer>(Stream). If 'utf8' (the default), also normalize newlines. */
   format?: 'utf8' | 'binary';
   /** (optional) detached signature for verification */
   signature?: Signature;
@@ -664,7 +664,7 @@ export interface EncryptSessionKeyOptions extends SessionKey {
   config?: PartialConfig
 }
 
-interface SerializedKeyPair<T extends string | Uint8Array> {
+interface SerializedKeyPair<T extends string | Uint8Array<ArrayBuffer>> {
   privateKey: T;
   publicKey: T;
 }
@@ -721,25 +721,25 @@ export function armor(messagetype: enums.armor, body: object, partindex?: number
 /**
  * DeArmor an OpenPGP armored message; verify the checksum and return the encoded bytes
  */
-export function unarmor(input: string, config?: Config): Promise<{ text: string, data: Stream<Uint8Array>, type: enums.armor }>;
+export function unarmor(input: string, config?: Config): Promise<{ text: string, data: Stream<Uint8Array<ArrayBuffer>>, type: enums.armor }>;
 
 export declare class Argon2S2K {
   static reloadWasmModule(): void;
   static ARGON2_WASM_MEMORY_THRESHOLD_RELOAD: number;
   constructor(config: Config);
-  salt: Uint8Array;
+  salt: Uint8Array<ArrayBuffer>;
   /** @throws Argon2OutOfMemoryError */
-  produceKey(passphrase: string, keySize: number): Promise<Uint8Array>;
+  produceKey(passphrase: string, keySize: number): Promise<Uint8Array<ArrayBuffer>>;
 }
 
 interface KDFParamsData {
   version: number;
   hash: enums.hash;
   cipher: enums.symmetric;
-  replacementFingerprint?: Uint8Array;
+  replacementFingerprint?: Uint8Array<ArrayBuffer>;
 }
 
 export class KDFParams {
   constructor(data: KDFParamsData);
-  write(forReplacementParams?: boolean): Uint8Array;
+  write(forReplacementParams?: boolean): Uint8Array<ArrayBuffer>;
 }

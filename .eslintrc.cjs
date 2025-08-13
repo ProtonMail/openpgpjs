@@ -22,7 +22,8 @@ module.exports = {
     '@typescript-eslint',
     'chai-friendly',
     'import',
-    'unicorn'
+    'unicorn',
+    '@protontech/enforce-uint8array-arraybuffer'
   ],
 
   'settings': {
@@ -139,6 +140,7 @@ module.exports = {
     '@typescript-eslint/no-unused-expressions': 0,
     'chai-friendly/no-unused-expressions': [2, { 'allowShortCircuit': true }],
     'unicorn/switch-case-braces': ['error', 'avoid'],
+    '@protontech/enforce-uint8array-arraybuffer/enforce-uint8array-arraybuffer': 'error',
 
     // Custom warnings:
     'no-console': 1
