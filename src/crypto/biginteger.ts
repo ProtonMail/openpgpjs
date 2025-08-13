@@ -3,7 +3,7 @@
 const _0n = BigInt(0);
 const _1n = BigInt(1);
 
-export function uint8ArrayToBigInt(bytes: Uint8Array) {
+export function uint8ArrayToBigInt(bytes: Uint8Array<ArrayBuffer>) {
   const hexAlphabet = '0123456789ABCDEF';
   let s = '';
   bytes.forEach(v => {
