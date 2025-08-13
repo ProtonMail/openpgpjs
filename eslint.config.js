@@ -9,6 +9,8 @@ import pluginImport from 'eslint-plugin-import';
 import pluginStylistic from '@stylistic/eslint-plugin';
 import pluginUnicorn from 'eslint-plugin-unicorn';
 import pluginJSDoc from 'eslint-plugin-jsdoc';
+// @ts-expect-error missing types
+import pluginEnforceUint8ArrayArrayBuffer from '@protontech/eslint-plugin-enforce-uint8array-arraybuffer';
 
 export default defineConfig(
   eslint.configs.recommended,
@@ -49,7 +51,8 @@ export default defineConfig(
       'chai-friendly': pluginChaiFriendly,
       'import': pluginImport,
       '@stylistic': pluginStylistic,
-      'unicorn': pluginUnicorn
+      'unicorn': pluginUnicorn,
+      '@protontech/enforce-uint8array-arraybuffer': pluginEnforceUint8ArrayArrayBuffer
     },
     rules: {
       'arrow-body-style': 'off',
@@ -155,6 +158,7 @@ export default defineConfig(
       '@typescript-eslint/restrict-template-expressions': 'off',
       'prefer-promise-reject-errors': 'off',
       '@typescript-eslint/prefer-promise-reject-errors': 'off',
+      '@protontech/enforce-uint8array-arraybuffer/enforce-uint8array-arraybuffer': 'error',
 
       '@stylistic/indent': ['error', 2, { 'SwitchCase': 1 }],
       '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],

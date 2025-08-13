@@ -73,6 +73,7 @@
     "@openpgp/tweetnacl": "^1.0.4-2",
     "@openpgp/unbzip2-stream": "^2.0.0",
     "@openpgp/web-stream-tools": "~0.3.0",
+    "@protontech/eslint-plugin-enforce-uint8array-arraybuffer": "^2.0.0",
     "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-commonjs": "^28.0.9",
     "@rollup/plugin-node-resolve": "^16.0.3",
