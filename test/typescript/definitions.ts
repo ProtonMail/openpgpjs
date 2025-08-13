@@ -84,7 +84,7 @@ import {
   // Encrypt binary message (unarmored)
   const binary = new Uint8Array([1, 2]);
   const binaryMessage = await createMessage({ binary });
-  const encryptedBinary: Uint8Array = await encrypt({ encryptionKeys: publicKeys, message: binaryMessage, format: 'binary' });
+  const encryptedBinary: Uint8Array<ArrayBuffer> = await encrypt({ encryptionKeys: publicKeys, message: binaryMessage, format: 'binary' });
   expect(encryptedBinary).to.be.instanceOf(Uint8Array);
 
   // Decrypt text message (armored)
@@ -96,11 +96,11 @@ import {
   // Decrypt binary message (unarmored)
   const encryptedBinaryMessage = await readMessage({ binaryMessage: encryptedBinary });
   const decryptedBinary = await decrypt({ decryptionKeys: privateKeys, message: encryptedBinaryMessage, format: 'binary' });
-  const decryptedBinaryData: Uint8Array = decryptedBinary.data;
+  const decryptedBinaryData: Uint8Array<ArrayBuffer> = decryptedBinary.data;
   expect(decryptedBinaryData).to.deep.equal(binary);
 
   // Encrypt message (inspect packets)
-  const encryptedBinaryObject: Message<Uint8Array> = await encrypt({ encryptionKeys: publicKeys, message: binaryMessage, format: 'object' });
+  const encryptedBinaryObject: Message<Uint8Array<ArrayBuffer>> = await encrypt({ encryptionKeys: publicKeys, message: binaryMessage, format: 'object' });
   expect(encryptedBinaryObject).to.be.instanceOf(Message);
   const encryptedTextObject: Message<string> = await encrypt({ encryptionKeys: publicKeys, message: textMessage, format: 'object' });
   expect(encryptedTextObject).to.be.instanceOf(Message);
@@ -138,10 +138,10 @@ import {
   const textSignedArmor: string = await sign({ signingKeys: privateKeys, message: textMessage });
   expect(textSignedArmor).to.include('-----BEGIN PGP MESSAGE-----');
   // Sign text message (unarmored)
-  const textSignedBinary: Uint8Array = await sign({ signingKeys: privateKeys, message: binaryMessage, format: 'binary' });
+  const textSignedBinary: Uint8Array<ArrayBuffer> = await sign({ signingKeys: privateKeys, message: binaryMessage, format: 'binary' });
   expect(textSignedBinary).to.be.instanceOf(Uint8Array);
   // Sign text and binary messages (inspect packages)
-  const binarySignedObject: Message<Uint8Array> = await sign({ signingKeys: privateKeys, message: binaryMessage, format: 'object' });
+  const binarySignedObject: Message<Uint8Array<ArrayBuffer>> = await sign({ signingKeys: privateKeys, message: binaryMessage, format: 'object' });
   expect(binarySignedObject).to.be.instanceOf(Message);
   const textSignedObject: Message<string> = await sign({ signingKeys: privateKeys, message: textMessage, format: 'object' });
   expect(textSignedObject).to.be.instanceOf(Message);
@@ -164,7 +164,7 @@ import {
   // Verify signed binary message (unarmored)
   const message = await readMessage({ binaryMessage: textSignedBinary });
   const verifiedBinary = await verify({ verificationKeys: publicKeys, message, format: 'binary' });
-  const verifiedBinaryData: Uint8Array = verifiedBinary.data;
+  const verifiedBinaryData: Uint8Array<ArrayBuffer> = verifiedBinary.data;
   expect(verifiedBinaryData).to.deep.equal(binary);
   await verify({ verificationKeys: privateKeys, message, format: 'binary' });
 
@@ -209,7 +209,7 @@ import {
   // @ts-expect-error for passing text stream as binary data
   await createMessage({ binary: new WebReadableStream<string>() });
   // @ts-expect-error for passing binary stream as text data
-  await createMessage({ text: new WebReadableStream<Uint8Array>() });
+  await createMessage({ text: new WebReadableStream<Uint8Array<ArrayBuffer>>() });
   
   // Streaming - encrypt text message (armored output)
   try {
@@ -221,19 +221,19 @@ import {
   const messageFromWebTextStream = await createMessage({ text: webTextStream });
   (await encrypt({ message: messageFromWebTextStream, passwords: 'password', format: 'armored' })) as WebStream<string>;
   messageFromWebTextStream.getText() as WebStream<string>;
-  messageFromWebTextStream.getLiteralData() as WebStream<Uint8Array>;
+  messageFromWebTextStream.getLiteralData() as WebStream<Uint8Array<ArrayBuffer>>;
 
   // Streaming - encrypt binary message (binary output)
   try {
     const nodeBinaryStream = NodeNativeReadableStream.toWeb(createReadStream('non-existent-file'));
     const messageFromNodeBinaryStream = await createMessage({ binary: nodeBinaryStream });
-    (await encrypt({ message: messageFromNodeBinaryStream, passwords: 'password', format: 'binary' })) as NodeWebStream<Uint8Array>;
+    (await encrypt({ message: messageFromNodeBinaryStream, passwords: 'password', format: 'binary' })) as NodeWebStream<Uint8Array<ArrayBuffer>>;
   } catch (err) {}
-  const webBinaryStream = new WebReadableStream<Uint8Array>();
+  const webBinaryStream = new WebReadableStream<Uint8Array<ArrayBuffer>>();
   const messageFromWebBinaryStream = await createMessage({ binary: webBinaryStream });
-  (await encrypt({ message: messageFromWebBinaryStream, passwords: 'password', format: 'binary' })) as WebStream<Uint8Array>;
+  (await encrypt({ message: messageFromWebBinaryStream, passwords: 'password', format: 'binary' })) as WebStream<Uint8Array<ArrayBuffer>>;
   messageFromWebBinaryStream.getText() as WebStream<string>;
-  messageFromWebBinaryStream.getLiteralData() as WebStream<Uint8Array>;
+  messageFromWebBinaryStream.getLiteralData() as WebStream<Uint8Array<ArrayBuffer>>;
 
   console.log('TypeScript definitions are correct');
 })().catch(e => {
