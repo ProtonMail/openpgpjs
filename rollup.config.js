@@ -10,6 +10,7 @@ import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import { wasm } from '@rollup/plugin-wasm';
 import typescript from '@rollup/plugin-typescript';
+import { dts } from "rollup-plugin-dts";
 
 // ESlint does not support JSON module imports yet, see https://github.com/eslint/eslint/discussions/15305
 // import pkg from './package.json' assert { type: 'json' };
@@ -64,6 +65,15 @@ const terserOptions = {
     comments: '/^(?:!|#__)/',
     preserve_annotations: true
   }
+};
+
+/**
+ * Bundle exported type declarations in a single file
+ */
+const typesDeclarationsBuild = {
+  input: "./src/index.d.ts",
+  output: [{ file: "dist/types/openpgp.d.ts", format: "es" }],
+  plugins: [dts()]
 };
 
 const nodeBuild = {
@@ -191,6 +201,7 @@ const getBrowserTestBuild = useLightweightBuild => ({
  *               whether the lightweight build should be included instead of the standard one
  */
 export default commandLineArgs => Object.assign([
+  typesDeclarationsBuild,
   nodeBuild,
   fullBrowserBuild,
   lightweightBrowserBuild,
