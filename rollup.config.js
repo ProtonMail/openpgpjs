@@ -73,7 +73,9 @@ const terserOptions = {
 const typesDeclarationsBuild = {
   input: "./src/index.d.ts",
   output: [{ file: "dist/types/openpgp.d.ts", format: "es" }],
-  plugins: [dts()]
+  plugins: [dts({
+    includeExternal: ['@openpgp/web-stream-tools'],
+  })]
 };
 
 const nodeBuild = {
