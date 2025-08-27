@@ -13,6 +13,8 @@ import type { WebStream as GenericWebStream, NodeWebStream as GenericNodeWebStre
 import enums from './enums';
 import config, { type Config, type PartialConfig } from './config';
 
+export { GrammarError } from './packet';
+
 export { enums, config, Config, PartialConfig };
 
 /* ############## STREAM #################### */
