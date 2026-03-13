@@ -1,7 +1,7 @@
 /** @access private */
 
-import * as ecdhX from '../../elliptic/ecdh_x';
-import enums from '../../../../enums';
+import * as ecdhX from '../../elliptic/ecdh_x.js';
+import enums from '../../../../enums.ts';
 
 export async function generate(algo) {
   switch (algo) {

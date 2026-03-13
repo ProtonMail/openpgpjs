@@ -24,21 +24,21 @@
  * @access private
  */
 
-import { rsa, elliptic, elgamal, dsa, hmac, postQuantum } from './public_key';
-import { getRandomBytes } from './random';
-import { getCipherParams } from './cipher';
-import ECDHSymkey from '../type/ecdh_symkey';
-import ShortByteString from '../type/short_byte_string';
-import { computeDigest, getHashByteLength } from './hash';
-import config from '../config';
-import KDFParams from '../type/kdf_params';
-import { SymAlgoEnum, AEADEnum, HashEnum } from '../type/enum';
-import enums from '../enums';
-import util from '../util';
-import OID from '../type/oid';
-import { UnsupportedError } from '../packet/packet';
-import ECDHXSymmetricKey from '../type/ecdh_x_symkey';
-import { getAEADMode } from './cipherMode';
+import { rsa, elliptic, elgamal, dsa, hmac, postQuantum } from './public_key/index.js';
+import { getRandomBytes } from './random.js';
+import { getCipherParams } from './cipher/index.js';
+import ECDHSymkey from '../type/ecdh_symkey.js';
+import ShortByteString from '../type/short_byte_string.js';
+import { computeDigest, getHashByteLength } from './hash/index.js';
+import config from '../config/index.ts';
+import KDFParams from '../type/kdf_params.js';
+import { SymAlgoEnum, AEADEnum, HashEnum } from '../type/enum.js';
+import enums from '../enums.ts';
+import util from '../util.js';
+import OID from '../type/oid.js';
+import { UnsupportedError } from '../packet/packet.js';
+import ECDHXSymmetricKey from '../type/ecdh_x_symkey.js';
+import { getAEADMode } from './cipherMode/index.js';
 
 /**
  * Encrypts data using specified algorithm and public key parameters.

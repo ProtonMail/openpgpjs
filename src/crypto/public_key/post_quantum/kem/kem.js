@@ -1,11 +1,11 @@
 /** @access private */
 
-import * as eccKem from './ecc_kem';
-import * as mlKem from './ml_kem';
-import * as aesKW from '../../../aes_kw';
-import util from '../../../../util';
-import enums from '../../../../enums';
-import { computeDigest } from '../../../hash';
+import * as eccKem from './ecc_kem.js';
+import * as mlKem from './ml_kem.js';
+import * as aesKW from '../../../aes_kw.js';
+import util from '../../../../util.js';
+import enums from '../../../../enums.ts';
+import { computeDigest } from '../../../hash/index.js';
 
 export async function generate(algo) {
   const { eccPublicKey, eccSecretKey } = await eccKem.generate(algo);

@@ -1,8 +1,8 @@
 /** @access private */
 
-import enums from '../../../../enums';
-import util from '../../../../util';
-import { getRandomBytes } from '../../../random';
+import enums from '../../../../enums.ts';
+import util from '../../../../util.js';
+import { getRandomBytes } from '../../../random.js';
 
 export async function generate(algo) {
   switch (algo) {
@@ -26,7 +26,7 @@ export async function generate(algo) {
 export async function expandSecretSeed(algo, seed) {
   switch (algo) {
     case enums.publicKey.pqc_mlkem_x25519: {
-      const { ml_kem768 } = await import('../noble_post_quantum');
+      const { ml_kem768 } = await import('../noble_post_quantum.ts');
       const { publicKey: encapsulationKey, secretKey: decapsulationKey } = ml_kem768.keygen(seed);
 
       return { mlkemPublicKey: encapsulationKey, mlkemSecretKey: decapsulationKey };
@@ -39,7 +39,7 @@ export async function expandSecretSeed(algo, seed) {
 export async function encaps(algo, mlkemRecipientPublicKey) {
   switch (algo) {
     case enums.publicKey.pqc_mlkem_x25519: {
-      const { ml_kem768 } = await import('../noble_post_quantum');
+      const { ml_kem768 } = await import('../noble_post_quantum.ts');
       const { cipherText: mlkemCipherText, sharedSecret: mlkemKeyShare } = ml_kem768.encapsulate(mlkemRecipientPublicKey);
 
       return { mlkemCipherText, mlkemKeyShare };
@@ -52,7 +52,7 @@ export async function encaps(algo, mlkemRecipientPublicKey) {
 export async function decaps(algo, mlkemCipherText, mlkemSecretKey) {
   switch (algo) {
     case enums.publicKey.pqc_mlkem_x25519: {
-      const { ml_kem768 } = await import('../noble_post_quantum');
+      const { ml_kem768 } = await import('../noble_post_quantum.ts');
       const mlkemKeyShare = ml_kem768.decapsulate(mlkemCipherText, mlkemSecretKey);
 
       return mlkemKeyShare;

@@ -1,7 +1,7 @@
 /** @access private */
 
-import * as eddsa from '../../elliptic/eddsa';
-import enums from '../../../../enums';
+import * as eddsa from '../../elliptic/eddsa.js';
+import enums from '../../../../enums.ts';
 
 export async function generate(algo) {
   switch (algo) {

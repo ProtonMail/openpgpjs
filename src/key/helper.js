@@ -8,11 +8,11 @@ import {
   SecretKeyPacket,
   SecretSubkeyPacket,
   SignaturePacket
-} from '../packet';
-import enums from '../enums';
-import { getPreferredCurveHashAlgo, getHashByteLength, publicKey } from '../crypto';
-import util from '../util';
-import defaultConfig from '../config';
+} from '../packet/index.js';
+import enums from '../enums.ts';
+import { getPreferredCurveHashAlgo, getHashByteLength, publicKey } from '../crypto/index.js';
+import util from '../util.js';
+import defaultConfig from '../config/index.ts';
 
 export async function generateSecretSubkey(options, config) {
   const secretSubkeyPacket = new SecretSubkeyPacket(options.date, config);

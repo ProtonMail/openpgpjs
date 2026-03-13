@@ -25,7 +25,7 @@
  */
 
 
-import enums from '../enums';
+import enums from '../enums.ts';
 
 const type_enum = type => class EnumType {
   constructor(data) {

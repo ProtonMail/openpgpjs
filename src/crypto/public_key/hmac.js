@@ -1,6 +1,6 @@
 /** @access private */
-import enums from '../../enums';
-import util from '../../util';
+import enums from '../../enums.ts';
+import util from '../../util.js';
 
 const supportedHashAlgos = new Set([enums.hash.sha1, enums.hash.sha256, enums.hash.sha512]);
 

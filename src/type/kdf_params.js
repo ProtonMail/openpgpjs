@@ -16,7 +16,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-import { UnsupportedError } from '../packet/packet';
+import { UnsupportedError } from '../packet/packet.js';
 
 /**
  * Implementation of type KDF parameters
@@ -28,7 +28,7 @@ import { UnsupportedError } from '../packet/packet';
  * SHA2-256 [FIPS-180-3] or stronger is REQUIRED.
  * @access private
  */
-import util from '../util';
+import util from '../util.js';
 
 const VERSION_FORWARDING = 0xFF;
 

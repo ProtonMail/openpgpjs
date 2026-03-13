@@ -2,9 +2,9 @@ import { use as chaiUse, expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised'; // eslint-disable-line import/newline-after-import
 chaiUse(chaiAsPromised);
 
-import { sign, verify } from '../../src/crypto/public_key/hmac';
-import enums from '../../src/enums';
-import util from '../../src/util';
+import { sign, verify } from '../../src/crypto/public_key/hmac.js';
+import enums from '../../src/enums.ts';
+import util from '../../src/util.js';
 
 export default () => describe('HMAC', function () {
   it('Test vectors', async function() {

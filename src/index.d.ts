@@ -10,10 +10,10 @@
  */
 
 import type { WebStream as GenericWebStream, NodeWebStream as GenericNodeWebStream } from '@openpgp/web-stream-tools';
-import enums from './enums';
-import config, { type Config, type PartialConfig } from './config';
+import enums from './enums.ts';
+import config, { type Config, type PartialConfig } from './config/index.ts';
 
-export { GrammarError } from './packet/grammar';
+export { GrammarError } from './packet/grammar.ts';
 
 export { enums, config, Config, PartialConfig };
 

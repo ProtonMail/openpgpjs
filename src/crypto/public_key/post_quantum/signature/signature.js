@@ -1,9 +1,9 @@
 /** @access private */
 
-import enums from '../../../../enums';
-import * as mldsa from './ml_dsa';
-import * as eccdsa from './ecc_dsa';
-import { getHashByteLength } from '../../../hash';
+import enums from '../../../../enums.ts';
+import * as mldsa from './ml_dsa.js';
+import * as eccdsa from './ecc_dsa.js';
+import { getHashByteLength } from '../../../hash/index.js';
 
 export async function generate(algo) {
   switch (algo) {

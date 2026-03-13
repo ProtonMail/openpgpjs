@@ -4,12 +4,12 @@
  * @access private
  */
 
-import { elliptic, rsa, dsa, hmac, postQuantum } from './public_key';
-import enums from '../enums';
-import util from '../util';
-import ShortByteString from '../type/short_byte_string';
-import { UnsupportedError } from '../packet/packet';
-import { getHashByteLength } from './hash';
+import { elliptic, rsa, dsa, hmac, postQuantum } from './public_key/index.js';
+import enums from '../enums.ts';
+import util from '../util.js';
+import ShortByteString from '../type/short_byte_string.js';
+import { UnsupportedError } from '../packet/packet.js';
+import { getHashByteLength } from './hash/index.js';
 
 /**
  * Parse signature in binary form to get the parameters.

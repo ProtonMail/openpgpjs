@@ -10,23 +10,23 @@ export {
   encrypt, decrypt, sign, verify,
   generateKey, reformatKey, revokeKey, decryptKey, encryptKey,
   generateSessionKey, encryptSessionKey, decryptSessionKeys
-} from './openpgp';
+} from './openpgp.js';
 
-export { PrivateKey, PublicKey, Subkey, readKey, readKeys, readPrivateKey, readPrivateKeys } from './key';
+export { PrivateKey, PublicKey, Subkey, readKey, readKeys, readPrivateKey, readPrivateKeys } from './key/index.js';
 
-export { Signature, readSignature } from './signature';
+export { Signature, readSignature } from './signature.js';
 
-export { Message, readMessage, createMessage } from './message';
+export { Message, readMessage, createMessage } from './message.js';
 
-export { CleartextMessage, readCleartextMessage, createCleartextMessage } from './cleartext';
+export { CleartextMessage, readCleartextMessage, createCleartextMessage } from './cleartext.js';
 
-export * from './packet';
+export * from './packet/index.js';
 
-export { default as KDFParams } from './type/kdf_params';
-export { default as Argon2S2K, Argon2OutOfMemoryError } from './type/s2k/argon2';
+export { default as KDFParams } from './type/kdf_params.js';
+export { default as Argon2S2K, Argon2OutOfMemoryError } from './type/s2k/argon2.js';
 
-export * from './encoding/armor';
+export * from './encoding/armor.js';
 
-export { default as enums } from './enums';
+export { default as enums } from './enums.ts';
 
-export { default as config } from './config/config';
+export { default as config } from './config/index.ts';

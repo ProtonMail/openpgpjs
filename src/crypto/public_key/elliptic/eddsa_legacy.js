@@ -22,10 +22,10 @@
  * @access private
  */
 
-import util from '../../../util';
-import enums from '../../../enums';
-import { CurveWithOID, checkPublicPointEnconding } from './oid_curves';
-import { sign as eddsaSign, verify as eddsaVerify, validateParams as eddsaValidateParams } from './eddsa';
+import util from '../../../util.js';
+import enums from '../../../enums.ts';
+import { CurveWithOID, checkPublicPointEnconding } from './oid_curves.js';
+import { sign as eddsaSign, verify as eddsaVerify, validateParams as eddsaValidateParams } from './eddsa.js';
 
 /**
  * Sign a message using the provided legacy EdDSA key
