@@ -544,7 +544,7 @@ export class UnparseablePacket {
   write: () => Uint8Array<ArrayBuffer>;
 }
 
-export type AnyPacket = BasePacket | UnparseablePacket;
+export type AnyPacket = BasePacket<boolean> | UnparseablePacket;
 export type AnySecretKeyPacket = SecretKeyPacket | SecretSubkeyPacket;
 export type AnyKeyPacket = BasePublicKeyPacket;
 
